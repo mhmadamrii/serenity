@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { DataStoreHeader } from "./_components/data-store-header";
+import { Customers } from "./_components/parts/customers";
 
 export function DataStoreClient() {
   const [tab, setTab] = useState("customers");
@@ -24,7 +25,7 @@ export function DataStoreClient() {
             <DataStoreHeader currentTab={tab} />
           </div>
           <TabsContent value="customers">
-            <div>customers</div>
+            <Customers />
           </TabsContent>
           <TabsContent value="products">
             <div>products</div>
