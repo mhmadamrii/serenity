@@ -35,7 +35,7 @@ const FormSchema = z.object({
 });
 
 export default function Register() {
-  const router = useRouter()
+  const router = useRouter();
   const [isAgree, setIsAgree] = useState<CheckedState>(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -47,7 +47,8 @@ export default function Register() {
   });
 
   const register = api.auth.register.useMutation({
-    onSuccess: () => {
+    onSuccess: (res) => {
+      console.log("res", res);
       toast.success("Register success!");
     },
   });

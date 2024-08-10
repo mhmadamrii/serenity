@@ -1,6 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { useRouter } from "next/navigation";
 import { Badge } from "~/components/ui/badge";
 import { File, ListFilter, MoreHorizontal, PlusCircle } from "lucide-react";
 import { Button } from "~/components/ui/button";
@@ -14,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -23,6 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+
 import {
   Table,
   TableBody,
@@ -31,7 +34,6 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { useRouter } from "next/navigation";
 
 const products = [
   {
@@ -61,12 +63,9 @@ export function TableSalesInvoice() {
         <Tabs defaultValue="all">
           <div className="flex items-center">
             <TabsList>
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="active">Active</TabsTrigger>
-              <TabsTrigger value="draft">Draft</TabsTrigger>
-              <TabsTrigger value="archived" className="hidden sm:flex">
-                Archived
-              </TabsTrigger>
+              <TabsTrigger value="all">Invoice</TabsTrigger>
+              <TabsTrigger value="active">Order</TabsTrigger>
+              <TabsTrigger value="draft">Return</TabsTrigger>
             </TabsList>
             <div className="ml-auto flex items-center gap-2">
               <DropdownMenu>

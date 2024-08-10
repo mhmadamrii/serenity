@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import { z } from "zod";
 import { cn } from "~/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,11 +15,10 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "~/components/ui/dialog";
+
 import {
   Form,
   FormControl,
@@ -30,6 +28,7 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
+
 import {
   Popover,
   PopoverContent,
@@ -64,7 +63,7 @@ export function FormSalesInvoice() {
   return (
     <main>
       <Dialog defaultOpen={true} onOpenChange={() => router.back()}>
-        <DialogContent className="w-full sm:w-[650px]">
+        <DialogContent className="min-h-full min-w-full sm:min-h-[500px] sm:min-w-[650px]">
           <DialogHeader>
             <DialogTitle>New invoice</DialogTitle>
             <DialogDescription>
@@ -73,7 +72,7 @@ export function FormSalesInvoice() {
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-              <section className="flex w-full items-center justify-between gap-3">
+              <section className="flex w-full flex-col items-center justify-between gap-3 sm:flex-row">
                 <FormField
                   control={form.control}
                   name="invoice_number"

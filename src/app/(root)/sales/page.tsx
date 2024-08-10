@@ -1,6 +1,5 @@
-import { Suspense } from "react";
-import { TableSalesInvoice } from "./_components/table-sales-invoice";
-import { FormSalesInvoice } from "./_components/form-sales-invoice";
+import { FormSalesInvoice } from "./_components/forms/form-sales-invoice";
+import { SalesClient } from "./sales-client";
 
 export default function Sales({
   searchParams,
@@ -9,12 +8,9 @@ export default function Sales({
     form_sales_invoice: string;
   };
 }) {
-  console.log("search params", searchParams);
   return (
     <>
-      <Suspense fallback={<span>PPR loading data..</span>}>
-        <TableSalesInvoice />
-      </Suspense>
+      <SalesClient />
 
       {searchParams.form_sales_invoice == "true" && <FormSalesInvoice />}
     </>
