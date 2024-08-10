@@ -48,8 +48,10 @@ export default function Register() {
 
   const register = api.auth.register.useMutation({
     onSuccess: (res) => {
-      console.log("res", res);
       toast.success("Register success!");
+    },
+    onError: (err) => {
+      toast.error(err.message);
     },
   });
 
@@ -86,6 +88,7 @@ export default function Register() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
+                        type="email"
                         placeholder="john@gmail.com"
                         {...field}
                         className="w-full"

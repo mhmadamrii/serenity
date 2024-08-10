@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
+}
+
+model Post {
+    id        Int      @id @default(autoincrement())
+    name      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([name])
+}
+
+model User {
+    id        Int        @id @default(autoincrement())
+    email     String     @unique
+    password  String
+    invoices  Invoice[]
+    purchases Purchase[]
+}
+
+model Invoice {
+    id            Int           @id @default(autoincrement())
+    invoiceNumber String
+    customerName  String
+    invoiceDate   DateTime
+    dueDate       DateTime
+    // status        Status        @default(UNPAID)
+    subtotal      Float
+    tax           Float
+    total         Float
+    userId        Int
+    user          User          @relation(fields: [userId], references: [id])
+    items         InvoiceItem[]
+}
+
+model Purchase {
+    id            Int            @id @default(autoincrement())
+    invoiceNumber String
+    supplierName  String
+    invoiceDate   DateTime
+    dueDate       DateTime
+    // status        Status         @default(UNPAID)
+    subtotal      Float
+    tax           Float
+    total         Float
+    userId        Int
+    user          User           @relation(fields: [userId], references: [id])
+    items         PurchaseItem[]
+}
+
+model InvoiceItem {
+    id          Int     @id @default(autoincrement())
+    description String
+    quantity    Int
+    unitPrice   Float
+    total       Float
+    invoiceId   Int
+    invoice     Invoice @relation(fields: [invoiceId], references: [id])
+}
+
+model PurchaseItem {
+    id          Int      @id @default(autoincrement())
+    description String
+    quantity    Int
+    unitPrice   Float
+    total       Float
+    purchaseId  Int
+    purchase    Purchase @relation(fields: [purchaseId], references: [id])
+}
+
+enum Status {
+    PAID
+    UNPAID
+}

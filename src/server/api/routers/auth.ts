@@ -1,17 +1,42 @@
-import { z } from "zod";
+import bcrypt from "bcrypt";
 
+import { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
     .input(z.object({ email: z.string().min(1), password: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.user.create({
-        data: {
-          email: input.email,
-          password: input.password,
-        },
-      });
+      try {
+        const hashedPassword = await bcrypt.hash(input.password, 10);
+        const user = await ctx.db.user.create({
+          data: {
+            email: input.email,
+            password: hashedPassword,
+          },
+        });
+
+        return user;
+      } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          if (
+            error.code === "P2002" &&
+            // @ts-ignore
+            error.meta?.target?.includes("email")
+          ) {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: "Email address is already registered.",
+            });
+          }
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An error occurred during registration.",
+        });
+      }
     }),
 
   login: publicProcedure
@@ -23,6 +48,21 @@ export const authRouter = createTRPCRouter({
         },
       });
 
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No user found with the provided email address.",
+        });
+      }
+
+      const passwordMatch = await bcrypt.compare(input.password, user.password);
+      if (!passwordMatch) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Invalid password.",
+        });
+      }
+
       return user;
     }),
 
@@ -33,23 +73,4 @@ export const authRouter = createTRPCRouter({
         greeting: `Hello ${input.text}`,
       };
     }),
-
-  create: publicProcedure
-    .input(z.object({ name: z.string().min(1) }))
-    .mutation(async ({ ctx, input }) => {
-      // simulate a slow db call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      return ctx.db.post.create({
-        data: {
-          name: input.name,
-        },
-      });
-    }),
-
-  getLatest: publicProcedure.query(({ ctx }) => {
-    return ctx.db.post.findFirst({
-      orderBy: { createdAt: "desc" },
-    });
-  }),
 });

@@ -4,10 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "~/components/ui/button";
+import { TRPCClientError } from "@trpc/client";
 import { Input } from "~/components/ui/input";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import { cn } from "~/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
@@ -16,7 +16,6 @@ import { toast } from "sonner";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -43,22 +42,24 @@ export default function Login() {
     },
   });
 
-  const login = api.auth.login.useMutation({
-    onSuccess: (res) => {
+  const { mutate, isPending } = api.auth.login.useMutation({
+    onSuccess: () => {
       toast.success("Login success!");
       router.push("/dashboard");
     },
-    onError: () => {
-      toast.error("User not found!");
+    onError: (err) => {
+      if (err instanceof TRPCClientError) {
+        toast.error(err.message);
+      }
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    login.mutate(data);
+    mutate(data);
   }
 
   return (
-    <div className="flex h-screen w-full justify-between lg:min-h-[600px] xl:min-h-[800px]">
+    <div className="flex h-screen w-full justify-between">
       <div className="flex w-full items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
@@ -118,7 +119,7 @@ export default function Login() {
                 </div>
               </div>
               <Button type="submit" className="w-full">
-                Login
+                {isPending ? "Loading" : "Login"}
               </Button>
               <Button variant="outline" className="w-full">
                 Login with Google
@@ -133,7 +134,7 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <div className="hidden h-screen w-full bg-muted lg:block">
+      <div className="hidden w-full bg-muted lg:block">
         <Image
           src="/login-hero.jpg"
           alt="Image"
