@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Badge } from "~/components/ui/badge";
 import { cn } from "~/lib/utils";
 
@@ -32,7 +33,6 @@ import {
 } from "~/components/ui/table";
 import { Button } from "~/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
-import Image from "next/image";
 
 const customers = [
   {
