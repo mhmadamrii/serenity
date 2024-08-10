@@ -15,7 +15,7 @@ import {
 export function DataStoreHeader({ currentTab }: { currentTab: string }) {
   const router = useRouter();
   return (
-    <div className="ml-auto flex items-center gap-2">
+    <div className="mb-5 ml-auto flex items-center gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="h-8 gap-1">

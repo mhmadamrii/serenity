@@ -1,4 +1,5 @@
 import "~/styles/globals.css";
+import NextTopLoader from "nextjs-toploader";
 
 import { GeistSans } from "geist/font/sans";
 import { TRPCReactProvider } from "~/trpc/react";
@@ -27,6 +28,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Toaster richColors />
+            <NextTopLoader color="#ef4444" />
             {children}
           </ThemeProvider>
         </TRPCReactProvider>

@@ -1,15 +1,19 @@
 "use client";
 
+import Image from "next/image";
+
 import { useRouter } from "next/navigation";
+import { api } from "~/trpc/react";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { z } from "zod";
-import { cn } from "~/lib/utils";
+import { UploadButton } from "~/lib/uploadthing";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Calendar } from "~/components/ui/calendar";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { UserPlus } from "lucide-react";
+import { toast } from "sonner";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 import {
   Dialog,
@@ -22,7 +26,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -54,6 +57,7 @@ const FormSchema = z.object({
 
 export function FormCustomer() {
   const router = useRouter();
+  const [uploadedImage, setUploadedImage] = useState<string | StaticImport>("");
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -64,15 +68,35 @@ export function FormCustomer() {
     },
   });
 
+  const { mutate, isPending } = api.customer.createCustomer.useMutation({
+    onSuccess: () => {
+      toast.success("Successfully create new customer!");
+      form.reset();
+    },
+    onError: () => {
+      toast.error("Failed to create new customer");
+    },
+  });
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log("data", data);
+    const rebuildBody = {
+      name: data.customer_name,
+      email: data.email,
+      address: data.customer_address,
+    };
+
+    mutate(rebuildBody);
   }
 
   return (
     <Dialog defaultOpen={true} onOpenChange={() => router.back()}>
       <DialogContent className="min-h-full min-w-full sm:min-h-[300px] sm:min-w-[650px]">
         <DialogHeader>
-          <DialogTitle>New Customer</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <UserPlus />
+            New Customer
+          </DialogTitle>
           <DialogDescription>
             Fill out the details below to create a new invoice.
           </DialogDescription>
@@ -82,6 +106,29 @@ export function FormCustomer() {
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex w-full flex-col space-y-1"
           >
+            <section className="flex items-center gap-3">
+              <Image
+                quality={100}
+                alt="user image"
+                src={uploadedImage == "" ? "/no-profile.png" : uploadedImage}
+                className="h-16 w-16 rounded-full border border-gray-600"
+                priority
+                width={0}
+                height={0}
+              />
+              <UploadButton
+                endpoint="imageUploader"
+                onClientUploadComplete={(res) => {
+                  console.log("Files: ", res);
+                  toast.success("Successfully uploaded image!");
+                  setUploadedImage(res[0]?.url as any);
+                }}
+                onUploadError={(error: Error) => {
+                  console.log(error);
+                  toast.error("Failed to upload image!");
+                }}
+              />
+            </section>
             <section className="flex w-full flex-col items-start justify-between gap-3 pb-5 sm:flex-row">
               <FormField
                 control={form.control}
@@ -122,7 +169,7 @@ export function FormCustomer() {
               />
             </section>
 
-            <section className="flex w-full items-start justify-between gap-3 py-8">
+            <section className="flex w-full items-start justify-between gap-3 pb-4">
               <FormField
                 control={form.control}
                 name="customer_address"
@@ -165,7 +212,7 @@ export function FormCustomer() {
             </section>
 
             <Button type="submit" className="mt-4 w-full">
-              Create Customer
+              {isPending ? "Loading" : "Create Customer"}
             </Button>
           </form>
         </Form>
