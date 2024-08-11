@@ -1,2 +1,7 @@
 Phase I:
     - create customer
+
+
+Important tutorials:
+
+    - next-auth authentication using github, google providers: https://www.youtube.com/watch?v=Cm6-3pVCPEI
