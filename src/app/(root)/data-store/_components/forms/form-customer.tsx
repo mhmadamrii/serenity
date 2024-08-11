@@ -72,6 +72,7 @@ export function FormCustomer() {
     onSuccess: () => {
       toast.success("Successfully create new customer!");
       form.reset();
+      router.refresh();
     },
     onError: () => {
       toast.error("Failed to create new customer");
@@ -79,11 +80,11 @@ export function FormCustomer() {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("data", data);
     const rebuildBody = {
       name: data.customer_name,
       email: data.email,
       address: data.customer_address,
+      status: data.status === "active",
     };
 
     mutate(rebuildBody);

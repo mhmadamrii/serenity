@@ -136,7 +136,6 @@ export function TableCustomers() {
                   <TableBody>
                     {products.map((product) => (
                       <TableRow key={product.id}>
-                        {" "}
                         <TableCell className="font-medium">
                           {product.name}
                         </TableCell>

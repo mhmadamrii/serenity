@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { MoreHorizontal } from "lucide-react";
 import { cn } from "~/lib/utils";
 
 import {
@@ -31,29 +33,24 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { Button } from "~/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
 
-const customers = [
-  {
-    id: "123",
-    imageUrl: "https://placebeard.it/250/250",
-    email: "john@mail.com",
-    name: "John Doe",
-    isActive: true,
-  },
-  {
-    id: "456",
-    imageUrl: "https://placebeard.it/250/250",
-    email: "jane@mail.com",
-    name: "Jane Doe",
-    isActive: true,
-  },
-] as const;
+interface IProps {
+  customers: ICustomers[];
+}
 
-export function Customers() {
+interface ICustomers {
+  id: number;
+  name: string;
+  address: string;
+  isActive: boolean;
+  imageUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export function Customers({ customers }: IProps) {
   return (
-    <Card x-chunk="dashboard-06-chunk-0">
+    <Card x-chunk="dashboard-06-chunk-0 border border-red-500">
       <CardHeader>
         <CardTitle>Customer's Data</CardTitle>
         <CardDescription>
@@ -67,8 +64,10 @@ export function Customers() {
               <TableHead>Image</TableHead>
               <TableHead>Customer Name</TableHead>
               <TableHead>Customer Email</TableHead>
-              <TableHead className="hidden md:table-cell">Status</TableHead>
               <TableHead className="hidden md:table-cell">Created at</TableHead>
+              <TableHead className="hidden text-center md:table-cell">
+                Status
+              </TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
@@ -77,27 +76,28 @@ export function Customers() {
           <TableBody>
             {customers.map((customer) => (
               <TableRow key={customer.id}>
-                {" "}
                 <TableCell className="font-medium">
                   <Image
                     width={0}
                     height={0}
                     src={customer.imageUrl}
-                    className="h-10 w-10 rounded-full"
+                    className="h-10 w-10 rounded-full border"
                     alt="user"
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAC8AUUDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAECBv/EABQQAQAAAAAAAAAAAAAAAAAAAAD/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDkxFRkABQBVABQAUAAAABVEVAEVARFQBFQERUBEVAEVAAAFRQAAUABUUAAGgEZURRVEUFEUFABRFAAVQABFQBFQERUARUBEVARFQBFQAABUAUAFEUAAAAGgERRFBRFBVQBVQBVQUUAAAVAAEVARFQBFQERUBEVAEVAAAAAFRQFQBQAAAUQRGhAGlZUFVAGhFUURQFQFUQAABAARFQBFQERUBEVAEVAAAAAAAURQAAAAUQRFVlQaEUFVFUURRVABRFAAAQAAQBFQEBAEAERUAQABAAAFEAURQAAAAAAURQVWVBpWVBoRQURQURQAAAQAAEBAEVARFQBABAQAAAAAAAABUAUQAABRFBVZUGlZUFVAGhFBRAFEAUQABAAQBFQBBAEVAEAAAAAAAAAAAAAAAAAFVAFVFBVZUFVAFVAFEAVAAEAAQBAAQQBFQAAAAAAAAAAAAAAAAAABUUBUUFEUFEAaEAUQBRAAQBUEABAAQAAAAAAAAAAAAAAAAAAAAAAFABRAFVAFEAUQBRAAQBUEBUAAAAAAAAAAAAAAAAAAAAAAAAAFEUAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVAFAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAf/Z"
                   />
                 </TableCell>
                 <TableCell className="font-medium">{customer.name}</TableCell>
                 <TableCell className="font-medium">{customer.name}</TableCell>
-                <TableCell>
+                <TableCell className="font-medium">{customer.name}</TableCell>
+                <TableCell className="text-center">
                   <Badge
                     variant="outline"
-                    className={cn("bg-blue-500", {
+                    className={cn("bg-red-100 text-red-500", {
                       "bg-green-200 text-green-900": customer.isActive,
-                      "bg-gray-100 text-gray-700": customer.isActive,
                     })}
                   >
-                    {customer.isActive}
+                    {customer.isActive ? "Active" : "Inactive"}
                   </Badge>
                 </TableCell>
                 <TableCell>

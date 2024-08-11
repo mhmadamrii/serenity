@@ -10,6 +10,7 @@ export const customerRouter = createTRPCRouter({
         name: z.string().min(1),
         email: z.string(),
         address: z.string(),
+        status: z.boolean(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -19,9 +20,9 @@ export const customerRouter = createTRPCRouter({
             name: input.name,
             email: input.email,
             address: input.address,
+            isActive: input.status,
           },
         });
-        console.log("customer", customer);
 
         return customer;
       } catch (error) {
@@ -43,6 +44,36 @@ export const customerRouter = createTRPCRouter({
         });
       }
     }),
+
+  getCustomers: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.customer.findMany({});
+  }),
+  // .input(
+  //   z.object({
+  //     name: z.string().min(1),
+  //     email: z.string(),
+  //     address: z.string(),
+  //   }),
+  // )
+  // .mutation(async ({ ctx, input }) => {
+  //   try {
+  //     const customer = await ctx.db.customer.findMany({});
+  //     console.log("list customers", customer);
+
+  //     return customer;
+  //   } catch (error) {
+  //     if (error instanceof Prisma.PrismaClientKnownRequestError) {
+  //       throw new TRPCError({
+  //         code: "CONFLICT",
+  //         message: "Email address is already registered.",
+  //       });
+  //     }
+  //     throw new TRPCError({
+  //       code: "INTERNAL_SERVER_ERROR",
+  //       message: "An error occurred during registration.",
+  //     });
+  //   }
+  // }),
 
   hello: publicProcedure
     .input(z.object({ text: z.string() }))

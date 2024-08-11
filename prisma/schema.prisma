@@ -25,6 +25,7 @@ model Customer {
     id        Int      @id @default(autoincrement())
     name      String
     address   String
+    imageUrl  String?  @default("")
     email     String?
     isActive  Boolean  @default(false)
     createdAt DateTime @default(now())
