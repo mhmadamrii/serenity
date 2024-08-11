@@ -50,7 +50,7 @@ interface ICustomers {
 
 export function Customers({ customers }: IProps) {
   return (
-    <Card x-chunk="dashboard-06-chunk-0 border border-red-500">
+    <Card x-chunk="dashboard-06-chunk-0">
       <CardHeader>
         <CardTitle>Customer's Data</CardTitle>
         <CardDescription>

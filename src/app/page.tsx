@@ -6,16 +6,16 @@ import { Button } from "~/components/ui/button";
 export default function LandingPage() {
   return (
     <div className="flex min-h-[100dvh] flex-col">
-      <header className="flex h-14 items-center border-b px-4 lg:px-6">
+      <header className="sticky top-0 z-10 flex h-14 items-center border-b border-gray-700 px-4 backdrop-blur-sm lg:px-6">
         <Link
           href="#"
           className="flex items-center justify-center"
           prefetch={false}
         >
           <MountainIcon className="h-6 w-6" />
-          <span className="sr-only">Acme Accounting</span>
+          <span className="sr-only">Serenity Accounting</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
+        <nav className="ml-auto flex gap-2 sm:gap-3">
           <Link
             href="/register"
             className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
@@ -32,6 +32,7 @@ export default function LandingPage() {
           </Link>
         </nav>
       </header>
+
       <main className="flex-1">
         <section className="w-full border-t py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
@@ -40,8 +41,8 @@ export default function LandingPage() {
                 <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
                   Accounting
                 </div>
-                <h2 className="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem]">
-                  Streamline Your Accounting with Acme
+                <h2 className="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-3xl md:text-5xl xl:text-[3.3rem] 2xl:text-[3.6rem]">
+                  Streamline Your Accounting with <span>SERENITY</span>
                 </h2>
                 <Button className="inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50">
                   Get Started
@@ -52,10 +53,10 @@ export default function LandingPage() {
                   Features
                 </div>
                 <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed">
-                  Acme offers a comprehensive suite of accounting features to
-                  help your business stay on top of its finances. From invoicing
-                  and expense tracking to tax preparation and advanced
-                  reporting, Acme has everything you need to streamline your
+                  Serenity offers a comprehensive suite of accounting features
+                  to help your business stay on top of its finances. From
+                  invoicing and expense tracking to tax preparation and advanced
+                  reporting, Serenity has everything you need to streamline your
                   accounting processes.
                 </p>
                 <Button
@@ -79,7 +80,7 @@ export default function LandingPage() {
                   Flexible Pricing for Every Business
                 </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Acme offers a range of pricing plans to fit your business
+                  Serenity offers a range of pricing plans to fit your business
                   needs. Whether you're a small startup or a large enterprise,
                   we have a plan that's right for you.
                 </p>
@@ -174,9 +175,10 @@ export default function LandingPage() {
           </div>
         </section>
       </main>
+
       <footer className="flex w-full shrink-0 flex-col items-center gap-2 border-t px-4 py-6 sm:flex-row md:px-6">
         <p className="text-xs text-muted-foreground">
-          &copy; 2024 Acme Accounting. All rights reserved.
+          &copy; 2024 Serenity Accounting. All rights reserved.
         </p>
         <nav className="flex gap-4 sm:ml-auto sm:gap-6">
           <Link

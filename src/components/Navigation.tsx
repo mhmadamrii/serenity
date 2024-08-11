@@ -45,7 +45,7 @@ export function Navigation() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b px-4 backdrop-blur-sm md:px-6">
       <nav className="hidden w-full flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Link
           href="/dashboard"
@@ -83,34 +83,34 @@ export function Navigation() {
               className="flex items-center gap-2 text-lg font-semibold"
             >
               <Package2 className="h-6 w-6" />
-              <span className="sr-only">Acme Inc</span>
+              <span className="sr-only">Serenity Inc</span>
             </Link>
-            <Link href="#" className="hover:text-foreground">
+            <Link href="/dashboard" className="hover:text-foreground">
               Dashboard
             </Link>
             <Link
-              href="#"
+              href="/data-store"
               className="text-muted-foreground hover:text-foreground"
             >
-              Orders
+              Data Store
             </Link>
             <Link
-              href="#"
+              href="/sales"
               className="text-muted-foreground hover:text-foreground"
             >
-              Products
+              Sales
             </Link>
             <Link
-              href="#"
+              href="/purchase"
               className="text-muted-foreground hover:text-foreground"
             >
-              Customers
+              Purchase
             </Link>
             <Link
-              href="#"
+              href="/report"
               className="text-muted-foreground hover:text-foreground"
             >
-              Analytics
+              Report
             </Link>
           </nav>
         </SheetContent>

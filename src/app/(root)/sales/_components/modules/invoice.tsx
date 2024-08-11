@@ -1,8 +1,5 @@
-import { Suspense } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-// import { useRouter } from "next/navigation";
 import { Badge } from "~/components/ui/badge";
-import { File, ListFilter, MoreHorizontal, PlusCircle } from "lucide-react";
+import { MoreHorizontal, FileCheck2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
@@ -57,7 +54,10 @@ export function Invoice() {
   return (
     <Card x-chunk="dashboard-06-chunk-0">
       <CardHeader>
-        <CardTitle>Sales Invoice</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <FileCheck2 />
+          Sales Invoice
+        </CardTitle>
         <CardDescription>
           Manage your invoice and view their sales performance.
         </CardDescription>
