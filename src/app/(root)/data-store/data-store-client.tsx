@@ -13,6 +13,7 @@ interface ICustomers {
   id: number;
   name: string;
   address: string;
+  imageUrl: string | null;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

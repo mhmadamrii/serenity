@@ -43,7 +43,7 @@ interface ICustomers {
   name: string;
   address: string;
   isActive: boolean;
-  imageUrl: string;
+  imageUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -80,7 +80,7 @@ export function Customers({ customers }: IProps) {
                   <Image
                     width={0}
                     height={0}
-                    src={customer.imageUrl}
+                    src={customer.imageUrl as any}
                     className="h-10 w-10 rounded-full border"
                     alt="user"
                     placeholder="blur"
