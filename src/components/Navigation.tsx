@@ -10,6 +10,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { ModeToggle } from "./toggle-theme";
+import { signOut } from "next-auth/react";
 
 import {
   DropdownMenu,
@@ -139,7 +140,11 @@ export function Navigation() {
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push("/")}>
+            <DropdownMenuItem
+              onClick={async () => {
+                await signOut();
+              }}
+            >
               Logout
             </DropdownMenuItem>
           </DropdownMenuContent>

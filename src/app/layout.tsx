@@ -5,6 +5,7 @@ import { GeistSans } from "geist/font/sans";
 import { TRPCReactProvider } from "~/trpc/react";
 import { ThemeProvider } from "~/components/theme-provider";
 import { Toaster } from "sonner";
+import SessionWrapper from "./_components/session-wrapper";
 
 export const metadata = {
   title: "Create T3 App",
@@ -18,21 +19,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <body>
-        <TRPCReactProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Toaster richColors />
-            <NextTopLoader color="#ef4444" />
-            {children}
-          </ThemeProvider>
-        </TRPCReactProvider>
-      </body>
-    </html>
+    <SessionWrapper>
+      <html lang="en" className={`${GeistSans.variable}`}>
+        <body>
+          <TRPCReactProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Toaster richColors />
+              <NextTopLoader color="#ef4444" />
+              {children}
+            </ThemeProvider>
+          </TRPCReactProvider>
+        </body>
+      </html>
+    </SessionWrapper>
   );
 }

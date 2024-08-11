@@ -12,6 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
+import { signIn, useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 import {
   Form,
@@ -33,6 +35,7 @@ const FormSchema = z.object({
 
 export default function Login() {
   const router = useRouter();
+  const { data } = useSession();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -57,6 +60,12 @@ export default function Login() {
   function onSubmit(data: z.infer<typeof FormSchema>) {
     mutate(data);
   }
+
+  useEffect(() => {
+    if (data !== undefined) {
+      router.push("/dashboard");
+    }
+  }, [data]);
 
   return (
     <div className="flex h-screen w-full justify-between">
@@ -121,7 +130,12 @@ export default function Login() {
               <Button type="submit" className="w-full">
                 {isPending ? "Loading" : "Login"}
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => signIn("google")}
+              >
                 Login with Google
               </Button>
             </form>
