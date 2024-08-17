@@ -1,3 +1,5 @@
+"use client";
+
 import { File, ListFilter, PlusCircle } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -42,7 +44,7 @@ export function DataStoreHeader({ currentTab }: { currentTab: string }) {
       <Button
         size="sm"
         className="h-8 gap-1"
-        onClick={() => router.push(`?form_${currentTab}=true`)}
+        onClick={() => router.push(`?form_${currentTab}=true&type=create`)}
       >
         <PlusCircle className="h-3.5 w-3.5" />
         <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">

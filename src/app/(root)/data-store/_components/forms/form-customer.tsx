@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { z } from "zod";
@@ -57,7 +57,12 @@ const FormSchema = z.object({
 
 export function FormCustomer() {
   const router = useRouter();
+  const utils = api.useUtils();
   const [uploadedImage, setUploadedImage] = useState<string | StaticImport>("");
+
+  const searchParams = useSearchParams();
+  const idUser = searchParams.get("id") as "string";
+  const typeForm = searchParams.get("type");
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -68,11 +73,33 @@ export function FormCustomer() {
     },
   });
 
+  const { data } = api.customer.getCustomerById.useQuery({
+    id: idUser ?? "13",
+  });
+
   const { mutate, isPending } = api.customer.createCustomer.useMutation({
     onSuccess: () => {
       toast.success("Successfully create new customer!");
       form.reset();
       router.refresh();
+    },
+    onError: () => {
+      toast.error("Failed to create new customer");
+    },
+  });
+
+  const {
+    mutate: editCustomer,
+    isPending: isPendingEdit,
+    status,
+  } = api.customer.editCustomer.useMutation({
+    onSuccess: (res) => {
+      toast.success("Successfully edit customer!");
+      router.refresh();
+      console.log(res);
+      if (res) {
+        router.back();
+      }
     },
     onError: () => {
       toast.error("Failed to create new customer");
@@ -87,8 +114,32 @@ export function FormCustomer() {
       status: data.status === "active",
     };
 
-    mutate(rebuildBody);
+    switch (typeForm) {
+      case "create":
+        mutate(rebuildBody);
+        break;
+
+      case "edit":
+        editCustomer({ ...rebuildBody, id: parseInt(idUser) });
+        break;
+
+      default:
+        break;
+    }
   }
+
+  useEffect(() => {
+    if (data && idUser) {
+      form.setValue("customer_name", data.name);
+      form.setValue("customer_address", data.address);
+      form.setValue("email", data.email as string);
+      if (data.isActive) {
+        form.setValue("status", "active");
+      } else {
+        form.setValue("status", "not_active");
+      }
+    }
+  }, [data]);
 
   return (
     <Dialog defaultOpen={true} onOpenChange={() => router.back()}>
@@ -102,6 +153,9 @@ export function FormCustomer() {
             Fill out the details below to create a new invoice.
           </DialogDescription>
         </DialogHeader>
+        <Button onClick={() => utils.customer.getCustomers.invalidate()}>
+          Refetch
+        </Button>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -112,10 +166,10 @@ export function FormCustomer() {
                 quality={100}
                 alt="user image"
                 src={uploadedImage == "" ? "/no-profile.png" : uploadedImage}
-                className="h-16 w-16 rounded-full border border-gray-600"
+                className="rounded-full border border-gray-600"
                 priority
-                width={0}
-                height={0}
+                width={90}
+                height={80}
               />
               <UploadButton
                 endpoint="imageUploader"
@@ -194,7 +248,7 @@ export function FormCustomer() {
                 name="status"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Status</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -213,7 +267,11 @@ export function FormCustomer() {
             </section>
 
             <Button type="submit" className="mt-4 w-full">
-              {isPending ? "Loading" : "Create Customer"}
+              {isPending || isPendingEdit
+                ? "Loading"
+                : idUser
+                  ? "Edit Customer"
+                  : "Create Customer"}
             </Button>
           </form>
         </Form>

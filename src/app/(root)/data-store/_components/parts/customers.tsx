@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Badge } from "~/components/ui/badge";
+import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { cn } from "~/lib/utils";
@@ -17,11 +18,9 @@ import {
 
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
@@ -36,6 +35,7 @@ import {
 
 interface IProps {
   customers: ICustomers[];
+  currentTab: string;
 }
 
 interface ICustomers {
@@ -44,11 +44,13 @@ interface ICustomers {
   address: string;
   isActive: boolean;
   imageUrl: string | null;
+  email: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export function Customers({ customers }: IProps) {
+export function Customers({ customers, currentTab }: IProps) {
+  const router = useRouter();
   return (
     <Card x-chunk="dashboard-06-chunk-0">
       <CardHeader>
@@ -77,7 +79,7 @@ export function Customers({ customers }: IProps) {
             {customers.map((customer) => (
               <TableRow key={customer.id}>
                 <TableCell className="font-medium">
-                  <Image
+                  {/* <Image
                     width={0}
                     height={0}
                     src={customer.imageUrl as any}
@@ -85,10 +87,10 @@ export function Customers({ customers }: IProps) {
                     alt="user"
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAC8AUUDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAECBv/EABQQAQAAAAAAAAAAAAAAAAAAAAD/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDkxFRkABQBVABQAUAAAABVEVAEVARFQBFQERUBEVAEVAAAFRQAAUABUUAAGgEZURRVEUFEUFABRFAAVQABFQBFQERUARUBEVARFQBFQAABUAUAFEUAAAAGgERRFBRFBVQBVQBVQUUAAAVAAEVARFQBFQERUBEVAEVAAAAAFRQFQBQAAAUQRGhAGlZUFVAGhFUURQFQFUQAABAARFQBFQERUBEVAEVAAAAAAAURQAAAAUQRFVlQaEUFVFUURRVABRFAAAQAAQBFQEBAEAERUAQABAAAFEAURQAAAAAAURQVWVBpWVBoRQURQURQAAAQAAEBAEVARFQBABAQAAAAAAAABUAUQAABRFBVZUGlZUFVAGhFBRAFEAUQABAAQBFQBBAEVAEAAAAAAAAAAAAAAAAAFVAFVFBVZUFVAFVAFEAVAAEAAQBAAQQBFQAAAAAAAAAAAAAAAAAABUUBUUFEUFEAaEAUQBRAAQBUEABAAQAAAAAAAAAAAAAAAAAAAAAAFABRAFVAFEAUQBRAAQBUEBUAAAAAAAAAAAAAAAAAAAAAAAAAFEUAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVAFAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAf/Z"
-                  />
+                  /> */}
                 </TableCell>
                 <TableCell className="font-medium">{customer.name}</TableCell>
-                <TableCell className="font-medium">{customer.name}</TableCell>
+                <TableCell className="font-medium">{customer.email}</TableCell>
                 <TableCell className="font-medium">{customer.name}</TableCell>
                 <TableCell className="text-center">
                   <Badge
@@ -110,7 +112,15 @@ export function Customers({ customers }: IProps) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          router.push(
+                            `?form_${currentTab}=true&type=edit&id=${customer.id}`,
+                          )
+                        }
+                      >
+                        Edit
+                      </DropdownMenuItem>
                       <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

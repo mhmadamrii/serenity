@@ -15,12 +15,12 @@ interface ICustomers {
   address: string;
   imageUrl: string | null;
   isActive: boolean;
+  email: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export function DataStoreClient({ customers }: IProps) {
-  console.log("customers", customers);
   const [tab, setTab] = useState("customers");
 
   const onTabChange = (value: string) => {
@@ -40,7 +40,7 @@ export function DataStoreClient({ customers }: IProps) {
             <DataStoreHeader currentTab={tab} />
           </div>
           <TabsContent value="customers">
-            <Customers customers={customers} />
+            <Customers currentTab={tab} customers={customers} />
           </TabsContent>
           <TabsContent value="products">
             <div>products</div>
