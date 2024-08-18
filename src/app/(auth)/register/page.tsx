@@ -18,7 +18,6 @@ import { toast } from "sonner";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -55,8 +54,18 @@ export default function Register() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    register.mutate(data);
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    if (result.error) {
+      return toast.error(result.error);
+    }
+    // register.mutate(data);
+    toast.success("Account created!");
   }
 
   return (

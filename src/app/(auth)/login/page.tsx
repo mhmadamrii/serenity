@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { FaGoogle } from "react-icons/fa";
 import { Button } from "~/components/ui/button";
 import { TRPCClientError } from "@trpc/client";
 import { Input } from "~/components/ui/input";
@@ -57,12 +58,21 @@ export default function Login() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    mutate(data);
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const response = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
+
+    if (response?.ok) {
+      toast.success("Succcessfully logged in!");
+      router.push("/dashboard");
+    }
   }
 
   useEffect(() => {
-    if (data !== undefined || data !== null) {
+    if (data?.user) {
       router.push("/dashboard");
     }
   }, [data]);
@@ -133,9 +143,10 @@ export default function Login() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full"
+                className="flex w-full gap-2"
                 onClick={() => signIn("google")}
               >
+                <FaGoogle />
                 Login with Google
               </Button>
             </form>
