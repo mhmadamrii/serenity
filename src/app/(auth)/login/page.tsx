@@ -65,10 +65,12 @@ export default function Login() {
       redirect: false,
     });
 
-    if (response?.ok) {
+    if (response?.status == 200) {
       toast.success("Succcessfully logged in!");
-      router.push("/dashboard");
+      return router.push("/dashboard");
     }
+
+    toast.error(response?.error);
   }
 
   useEffect(() => {
