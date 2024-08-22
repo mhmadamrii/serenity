@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { cn } from "~/lib/utils";
-import { CircleUser, Menu, Package2, Search } from "lucide-react";
+import { CircleUser, Menu, Package2, Search, Atom } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
@@ -53,7 +53,7 @@ export function Navigation() {
             "flex items-center gap-2 text-lg font-semibold md:text-base",
           )}
         >
-          <Package2 className="h-6 w-6" />
+          <Atom className="animate-spin-slow h-6 w-6" />
           <span className="sr-only">Acme Inc</span>
         </Link>
 

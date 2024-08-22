@@ -57,7 +57,6 @@ const FormSchema = z.object({
 
 export function FormCustomer() {
   const router = useRouter();
-  const utils = api.useUtils();
   const [uploadedImage, setUploadedImage] = useState<string | StaticImport>("");
 
   const searchParams = useSearchParams();
@@ -88,23 +87,20 @@ export function FormCustomer() {
     },
   });
 
-  const {
-    mutate: editCustomer,
-    isPending: isPendingEdit,
-    status,
-  } = api.customer.editCustomer.useMutation({
-    onSuccess: (res) => {
-      toast.success("Successfully edit customer!");
-      router.refresh();
-      console.log(res);
-      if (res) {
-        router.back();
-      }
-    },
-    onError: () => {
-      toast.error("Failed to create new customer");
-    },
-  });
+  const { mutate: editCustomer, isPending: isPendingEdit } =
+    api.customer.editCustomer.useMutation({
+      onSuccess: async (res) => {
+        toast.success("Successfully edit customer!");
+        if (res) {
+          router.refresh();
+          await new Promise((res, _) => setTimeout(res, 200));
+          router.back();
+        }
+      },
+      onError: () => {
+        toast.error("Failed to create new customer");
+      },
+    });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const rebuildBody = {
@@ -190,6 +186,7 @@ export function FormCustomer() {
                     <FormLabel>Customer Name</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={!data}
                         placeholder="John Doe"
                         {...field}
                         className="w-full"
@@ -209,6 +206,7 @@ export function FormCustomer() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={!data}
                         type="email"
                         placeholder="john@gmail.com"
                         {...field}
@@ -230,6 +228,7 @@ export function FormCustomer() {
                     <FormLabel>Customer Address</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={!data}
                         placeholder="Oxford"
                         {...field}
                         className="w-full"
@@ -246,7 +245,11 @@ export function FormCustomer() {
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={!data}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select customer status" />

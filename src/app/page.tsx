@@ -2,30 +2,32 @@ import Link from "next/link";
 
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
+import { Atom } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-[100dvh] flex-col">
+    <div className="relative z-50 flex min-h-[100dvh] flex-col bg-gradient-to-br from-gray-900 via-gray-900 to-gray-900">
+      <div className="absolute left-0 right-0 top-0 -z-10 h-[230px] bg-purple-400 bg-opacity-40 blur-2xl backdrop-blur-md"></div>
       <header className="sticky top-0 z-10 flex h-14 items-center border-b border-gray-700 px-4 backdrop-blur-sm lg:px-6">
         <Link
           href="#"
           className="flex items-center justify-center"
           prefetch={false}
         >
-          <MountainIcon className="h-6 w-6" />
+          <Atom className="animate-spin-slow h-6 w-6" />
           <span className="sr-only">Serenity Accounting</span>
         </Link>
         <nav className="ml-auto flex gap-2 sm:gap-3">
           <Link
             href="/register"
-            className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            className="inline-flex h-9 w-[100px] items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             prefetch={false}
           >
             Register
           </Link>
           <Link
             href="/login"
-            className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            className="inline-flex h-9 w-[100px] items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             prefetch={false}
           >
             Login

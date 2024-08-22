@@ -5,9 +5,9 @@ import Image from "next/image";
 import { Badge } from "~/components/ui/badge";
 import { useState } from "react";
 import { DialogDeleteCustomer } from "../dialog-delete-customer";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "~/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Users } from "lucide-react";
 import { cn } from "~/lib/utils";
 
 import {
@@ -60,7 +60,10 @@ export function Customers({ customers, currentTab }: IProps) {
     <>
       <Card x-chunk="dashboard-06-chunk-0">
         <CardHeader>
-          <CardTitle>Customer's Data</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Users />
+            Customer's Data
+          </CardTitle>
           <CardDescription>
             Manage your customer and view their details.
           </CardDescription>
