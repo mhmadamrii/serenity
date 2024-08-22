@@ -10,9 +10,10 @@ export default async function DataStore({
   };
 }) {
   const customers = await api.customer.getCustomers();
+  const products = await api.product.getProducts();
   return (
     <>
-      <DataStoreClient customers={customers} />
+      <DataStoreClient customers={customers} products={products} />
       {searchParams.form_customers == "true" && <FormCustomer />}
     </>
   );

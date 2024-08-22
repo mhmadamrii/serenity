@@ -31,8 +31,7 @@ export function DataStoreHeader({ currentTab }: { currentTab: string }) {
           <DropdownMenuLabel>Filter by</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuCheckboxItem checked>Active</DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem>Invactive</DropdownMenuCheckboxItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <Button size="sm" variant="outline" className="h-8 gap-1">

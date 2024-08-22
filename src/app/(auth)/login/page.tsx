@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { signIn, useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Form,
@@ -36,6 +36,7 @@ const FormSchema = z.object({
 
 export default function Login() {
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
   const { data } = useSession();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -46,19 +47,8 @@ export default function Login() {
     },
   });
 
-  const { mutate, isPending } = api.auth.login.useMutation({
-    onSuccess: () => {
-      toast.success("Login success!");
-      router.push("/dashboard");
-    },
-    onError: (err) => {
-      if (err instanceof TRPCClientError) {
-        toast.error(err.message);
-      }
-    },
-  });
-
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setIsPending(true);
     const response = await signIn("credentials", {
       email: data.email,
       password: data.password,
@@ -71,6 +61,7 @@ export default function Login() {
     }
 
     toast.error(response?.error);
+    setIsPending(false);
   }
 
   useEffect(() => {

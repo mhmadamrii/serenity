@@ -1,26 +1,19 @@
 "use client";
 
+import type { Product, Customer } from "@prisma/client";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { DataStoreHeader } from "./_components/data-store-header";
 import { Customers } from "./_components/parts/customers";
+import { Products } from "./_components/parts/products";
 
 interface IProps {
-  customers: ICustomers[];
+  customers: Customer[];
+  products: Product[];
 }
 
-interface ICustomers {
-  id: number;
-  name: string;
-  address: string;
-  imageUrl: string | null;
-  isActive: boolean;
-  email: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export function DataStoreClient({ customers }: IProps) {
+export function DataStoreClient({ customers, products }: IProps) {
+  console.log("products", products);
   const [tab, setTab] = useState("customers");
 
   const onTabChange = (value: string) => {
@@ -43,7 +36,7 @@ export function DataStoreClient({ customers }: IProps) {
             <Customers currentTab={tab} customers={customers} />
           </TabsContent>
           <TabsContent value="products">
-            <div>products</div>
+            <Products />
           </TabsContent>
           <TabsContent value="taxes">
             <div>taxes</div>

@@ -109,6 +109,18 @@ export const customerRouter = createTRPCRouter({
         },
       });
     }),
+
+  deleteCustomer: publicProcedure
+    .input(z.object({ id: z.union([z.string(), z.undefined()]) }))
+    .mutation(async ({ ctx, input }) => {
+      const id = typeof input.id === "string" ? parseInt(input.id) : input.id;
+      console.log("input id", id);
+      return await ctx.db.customer.delete({
+        where: {
+          id,
+        },
+      });
+    }),
   // .input(
   //   z.object({
   //     name: z.string().min(1),

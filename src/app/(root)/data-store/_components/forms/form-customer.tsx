@@ -147,15 +147,12 @@ export function FormCustomer() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus />
-            New Customer
+            {typeForm == "edit" ? "Edit Cutomer" : "New Customer"}
           </DialogTitle>
           <DialogDescription>
             Fill out the details below to create a new invoice.
           </DialogDescription>
         </DialogHeader>
-        <Button onClick={() => utils.customer.getCustomers.invalidate()}>
-          Refetch
-        </Button>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
