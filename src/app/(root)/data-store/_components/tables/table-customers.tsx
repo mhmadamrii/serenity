@@ -51,12 +51,16 @@ export function TableCustomers({
 
   return (
     <>
-      <Table>
+      <Table
+        className={cn("", {
+          hidden: customers.length === 0,
+        })}
+      >
         <TableHeader>
           <TableRow>
             <TableHead>Image</TableHead>
-            <TableHead>Customer Name</TableHead>
-            <TableHead>Customer Email</TableHead>
+            <TableHead>Contact Name</TableHead>
+            <TableHead>Contact Email</TableHead>
             <TableHead className="hidden text-center md:table-cell">
               Status
             </TableHead>

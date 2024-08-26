@@ -63,13 +63,16 @@ model Purchase {
 }
 
 model Product {
-    id         Int      @id @default(autoincrement())
-    name       String
-    stock      Int
-    price      Float
-    seller     String
-    customerId Int
-    customer   Customer @relation(fields: [customerId], references: [id])
+    id          Int      @id @default(autoincrement())
+    name        String
+    stock       Int
+    price       Float
+    seller      String
+    customerId  Int
+    imageUrl    String?
+    badge       String?
+    description String
+    customer    Customer @relation(fields: [customerId], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

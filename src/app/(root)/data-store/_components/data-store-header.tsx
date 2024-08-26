@@ -47,7 +47,7 @@ export function DataStoreHeader({ headerName }: { headerName: string }) {
             <Slash />
           </BreadcrumbSeparator>
           <BreadcrumbItem>
-            <BreadcrumbPage>Customers</BreadcrumbPage>
+            <BreadcrumbPage>{toPascalCase(headerName)}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>

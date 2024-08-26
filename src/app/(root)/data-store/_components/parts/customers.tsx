@@ -1,4 +1,5 @@
 import { Users } from "lucide-react";
+import { NoData } from "~/components/no-data/NoData";
 import { TableCustomers } from "../tables/table-customers";
 import { api } from "~/trpc/server";
 
@@ -10,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { DataStoreHeader } from "../data-store-header";
 
 interface IProps {
   currentTab?: string;
@@ -25,14 +25,20 @@ export async function Customers({ currentTab = "customers" }: IProps) {
       <CardHeader className="flex justify-between">
         <CardTitle className="flex gap-2">
           <Users />
-          Customer's Data
+          Contact Data
         </CardTitle>
         <CardDescription>
-          Manage your customer and view their details.
+          Manage your contact and view their details.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <TableCustomers currentTab={currentTab} customers={customers} />
+        <NoData
+          name="Contact"
+          shouldRender={customers.length === 0}
+          createPathUrl="?form_customers=true&type=create"
+          title="You don't have any contact yet!"
+        />
       </CardContent>
       <CardFooter>
         <div className="text-xs text-muted-foreground">

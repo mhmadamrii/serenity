@@ -28,6 +28,7 @@ export const productRouter = createTRPCRouter({
         price: z.number(),
         seller: z.string(),
         customerId: z.number(),
+        description: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -39,6 +40,7 @@ export const productRouter = createTRPCRouter({
             price: input.price,
             seller: input.seller,
             customerId: input.customerId,
+            description: input.description,
           },
         });
 
@@ -56,11 +58,12 @@ export const productRouter = createTRPCRouter({
   editProduct: publicProcedure
     .input(
       z.object({
-        id: z.union([z.number(), z.null()]),
+        id: z.number(),
         name: z.string().min(1),
-        email: z.string(),
-        address: z.string(),
-        status: z.boolean(),
+        stock: z.number(),
+        price: z.number(),
+        seller: z.string(),
+        customerId: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -69,19 +72,20 @@ export const productRouter = createTRPCRouter({
           return;
         }
 
-        const customer = await ctx.db.customer.update({
+        const product = await ctx.db.product.update({
           where: {
             id: input.id,
           },
           data: {
             name: input.name,
-            email: input.email,
-            address: input.address,
-            isActive: input.status,
+            stock: input.stock,
+            price: input.price,
+            seller: input.seller,
+            customerId: input.customerId,
           },
         });
 
-        return customer;
+        return product;
       } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           if (

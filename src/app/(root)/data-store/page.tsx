@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Users, Receipt, ShoppingCart } from "lucide-react";
 import { Separator } from "~/components/ui/separator";
+
 import {
   Card,
   CardContent,
@@ -14,7 +15,7 @@ import {
 const menuLists = [
   {
     id: 1,
-    title: "Customers",
+    title: "Contact",
     desc: "Lorem ipsum dolor sit amet",
     path: "/data-store/customers",
     icon: <Users size={100} />,

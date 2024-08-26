@@ -1,19 +1,18 @@
 "use client";
 
-import Image from "next/image";
-
+import type { Product } from "@prisma/client";
+import { Textarea } from "~/components/ui/textarea";
+import { LoaderImage } from "~/components/loader/loader-image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { z } from "zod";
-import { UploadButton } from "~/lib/uploadthing";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { UserPlus } from "lucide-react";
+import { PackageSearch } from "lucide-react";
 import { toast } from "sonner";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 import {
   Dialog,
@@ -41,23 +40,22 @@ import {
 } from "~/components/ui/select";
 
 const FormSchema = z.object({
-  customer_name: z.string().min(2, {
-    message: "Invoice number must be at least 2 characters.",
+  name: z.string().min(2, {
+    message: "Product name must be at least 2 characters.",
   }),
-  customer_address: z.string().min(2, {
-    message: "Customer name must be at least 2 characters.",
+  stock: z.coerce.number(),
+  price: z.coerce.number(),
+  customerId: z.coerce.number(),
+  seller: z.string().min(1, {
+    message: "Seller name must be at least 2 characters.",
   }),
-  email: z.string().min(2, {
-    message: "Email must be at least 2 characters.",
-  }),
-  status: z.string().min(2, {
-    message: "Email must be at least 2 characters.",
+  description: z.string().min(2, {
+    message: "Product description must be at least 2 characters.",
   }),
 });
 
-export function FormCustomer({ open }: { open: boolean }) {
+export function FormProduct({ open }: { open: boolean }) {
   const router = useRouter();
-  const [uploadedImage, setUploadedImage] = useState<string | StaticImport>("");
 
   const searchParams = useSearchParams();
   const idUser = searchParams.get("id") as "string";
@@ -66,31 +64,35 @@ export function FormCustomer({ open }: { open: boolean }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      customer_name: "",
-      customer_address: "",
-      email: "",
+      name: "",
+      customerId: 0,
+      price: 0,
+      stock: 0,
+      seller: "",
     },
   });
+
+  const { data: customerLists } = api.customer.getCustomers.useQuery();
 
   const { data } = api.customer.getCustomerById.useQuery({
     id: idUser ?? "13",
   });
 
-  const { mutate, isPending } = api.customer.createCustomer.useMutation({
+  const { mutate, isPending } = api.product.createProduct.useMutation({
     onSuccess: () => {
-      toast.success("Successfully create new customer!");
+      toast.success("Successfully create new product!");
       form.reset();
       router.refresh();
     },
     onError: () => {
-      toast.error("Failed to create new customer");
+      toast.error("Failed to create new product");
     },
   });
 
-  const { mutate: editCustomer, isPending: isPendingEdit } =
-    api.customer.editCustomer.useMutation({
+  const { mutate: editProduct, isPending: isPendingEdit } =
+    api.product.editProduct.useMutation({
       onSuccess: async (res) => {
-        toast.success("Successfully edit customer!");
+        toast.success("Successfully edit product!");
         if (res) {
           router.refresh();
           await new Promise((res, _) => setTimeout(res, 500));
@@ -104,11 +106,14 @@ export function FormCustomer({ open }: { open: boolean }) {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const rebuildBody = {
-      name: data.customer_name,
-      email: data.email,
-      address: data.customer_address,
-      status: data.status === "active",
+      name: data.name,
+      stock: data.stock,
+      price: data.price,
+      seller: data.seller,
+      customerId: data.customerId,
+      description: data.description,
     };
+    console.log("rebuildBody", rebuildBody);
 
     switch (typeForm) {
       case "create":
@@ -116,7 +121,7 @@ export function FormCustomer({ open }: { open: boolean }) {
         break;
 
       case "edit":
-        editCustomer({ ...rebuildBody, id: parseInt(idUser) });
+        editProduct({ ...rebuildBody, id: parseInt(idUser) });
         break;
 
       default:
@@ -126,26 +131,24 @@ export function FormCustomer({ open }: { open: boolean }) {
 
   useEffect(() => {
     if (data && idUser) {
-      form.setValue("customer_name", data.name);
-      form.setValue("customer_address", data.address);
-      form.setValue("email", data.email as string);
-      if (data.isActive) {
-        form.setValue("status", "active");
-      } else {
-        form.setValue("status", "not_active");
-      }
+      // form.setValue("name", data.name);
+      // form.setValue("stock", data.address);
+      // form.setValue("price", data.email as string);
     } else {
       form.reset();
     }
   }, [data]);
 
+  console.log("form", form.formState.errors);
+  console.log("form", form.getValues("seller"));
+
   return (
     <Dialog open={open} onOpenChange={() => router.back()}>
-      <DialogContent className="min-h-full min-w-full sm:min-h-[300px] sm:min-w-[650px]">
+      <DialogContent className="min-h-full min-w-full sm:min-h-[400px] sm:min-w-[650px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <UserPlus />
-            {typeForm == "edit" ? "Edit Cutomer" : "New Customer"}
+            <PackageSearch />
+            {typeForm == "edit" ? "Edit Product" : "New Product"}
           </DialogTitle>
           <DialogDescription>
             Fill out the details below to create a new invoice.
@@ -156,40 +159,17 @@ export function FormCustomer({ open }: { open: boolean }) {
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex w-full flex-col space-y-1"
           >
-            <section className="flex items-center gap-3">
-              <Image
-                quality={100}
-                alt="user image"
-                src={uploadedImage == "" ? "/no-profile.png" : uploadedImage}
-                className="rounded-full border border-gray-600"
-                priority
-                width={90}
-                height={80}
-              />
-              <UploadButton
-                endpoint="imageUploader"
-                onClientUploadComplete={(res) => {
-                  console.log("Files: ", res);
-                  toast.success("Successfully uploaded image!");
-                  setUploadedImage(res[0]?.url as any);
-                }}
-                onUploadError={(error: Error) => {
-                  console.log(error);
-                  toast.error("Failed to upload image!");
-                }}
-              />
-            </section>
             <section className="flex w-full flex-col items-start justify-between gap-3 pb-5 sm:flex-row">
               <FormField
                 control={form.control}
-                name="customer_name"
+                name="name"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Customer Name</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input
                         disabled={!data && typeForm === "edit"}
-                        placeholder="John Doe"
+                        placeholder="Mouse"
                         {...field}
                         className="w-full"
                       />
@@ -202,15 +182,15 @@ export function FormCustomer({ open }: { open: boolean }) {
 
               <FormField
                 control={form.control}
-                name="email"
+                name="stock"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Stock</FormLabel>
                     <FormControl>
                       <Input
                         disabled={!data && typeForm === "edit"}
-                        type="email"
-                        placeholder="john@gmail.com"
+                        type="text"
+                        placeholder="500"
                         {...field}
                       />
                     </FormControl>
@@ -224,10 +204,10 @@ export function FormCustomer({ open }: { open: boolean }) {
             <section className="flex w-full items-start justify-between gap-3 pb-4">
               <FormField
                 control={form.control}
-                name="customer_address"
+                name="price"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Customer Address</FormLabel>
+                    <FormLabel>Price</FormLabel>
                     <FormControl>
                       <Input
                         disabled={!data && typeForm === "edit"}
@@ -243,23 +223,29 @@ export function FormCustomer({ open }: { open: boolean }) {
 
               <FormField
                 control={form.control}
-                name="status"
+                name="seller"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Status</FormLabel>
+                    <FormLabel>Supplier</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      value={field.value}
+                      value={field.value.toString()}
                       disabled={!data && typeForm === "edit"}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select customer status" />
+                          <SelectValue placeholder="Select supplier" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="not_active">Not Active</SelectItem>
+                        {customerLists?.map((customer) => (
+                          <SelectItem
+                            key={customer.id}
+                            value={customer.id.toString()}
+                          >
+                            {customer.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -268,12 +254,35 @@ export function FormCustomer({ open }: { open: boolean }) {
               />
             </section>
 
-            <Button type="submit" className="mt-4 w-full">
-              {isPending || isPendingEdit
-                ? "Loading"
-                : idUser
-                  ? "Edit Customer"
-                  : "Create Customer"}
+            <section className="mt-[100px]">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Tell us about the product"
+                        className="mb-6"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="h-[10px]"></div>
+            </section>
+
+            <Button type="submit" className="mb-[100px] w-full">
+              {isPending || isPendingEdit ? (
+                <LoaderImage />
+              ) : idUser ? (
+                "Edit Product"
+              ) : (
+                "Create Product"
+              )}
             </Button>
           </form>
         </Form>

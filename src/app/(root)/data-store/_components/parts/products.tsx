@@ -1,110 +1,69 @@
-import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
+import Image from "next/image";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "~/components/ui/card";
 
-const products = [
-  {
-    id: 1,
-    title: "Leather Jacket",
-    description: "Classic black leather jacket with a modern twist.",
-    price: 199.99,
-    image: "https://placehold.co/300x200",
-    badge: "New",
-  },
-  {
-    id: 2,
-    title: "Denim Jeans",
-    description: "Comfortable and stylish denim jeans for everyday wear.",
-    price: 59.99,
-    image: "https://placehold.co/400x250",
-  },
-  {
-    id: 3,
-    title: "Sneakers",
-    description: "Lightweight and durable sneakers for all your adventures.",
-    price: 89.99,
-    image: "https://placehold.co/100x50",
-    badge: "Sale",
-  },
-  {
-    id: 4,
-    title: "Summer Dress",
-    description: "Flowy and elegant summer dress perfect for any occasion.",
-    price: 79.99,
-    image: "https://placehold.co/140x150",
-  },
-  {
-    id: 5,
-    title: "Sunglasses",
-    description: "Stylish sunglasses with UV protection for sunny days.",
-    price: 29.99,
-    image: "https://placehold.co/300x250",
-  },
-  {
-    id: 6,
-    title: "Watch",
-    description:
-      "Elegant timepiece with a leather strap and minimalist design.",
-    price: 149.99,
-    image: "https://placehold.co/300x250",
-    badge: "Limited",
-  },
-];
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { api } from "~/trpc/server";
+import { NoData } from "~/components/no-data/NoData";
+import { PackageSearch } from "lucide-react";
 
-export function Products() {
+export async function Products() {
+  await new Promise((res, rej) => setTimeout(res, 1000));
+  const myProducts = await api.product.getProducts();
+
   return (
-    <Card x-chunk="dashboard-06-chunk-0">
-      <CardHeader>
-        <CardTitle>Product's Data</CardTitle>
-        <CardDescription>
-          Manage your customer and view their details.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveMasonry>
-          <Masonry columnsCount={2} gutter="10px">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="flex h-fit flex-col rounded-lg border p-4 dark:border-gray-700"
-              >
-                <img
-                  src={product.image}
-                  alt={product.title}
-                  className="h-auto w-full rounded-md object-cover"
-                />
-                <div className="mb-2 flex items-start justify-between">
-                  <h2 className="text-xl font-semibold">{product.title}</h2>
-                  {product.badge && (
-                    <Badge variant="secondary" className="ml-2">
-                      {product.badge}
-                    </Badge>
-                  )}
-                </div>
-                <p className="mb-2 text-sm text-muted-foreground">
-                  {product.description}
-                </p>
-                <p className="text-lg font-bold">${product.price.toFixed(2)}</p>
-                <Button className="w-full">Add to Cart</Button>
+    <div className="container mx-auto p-4">
+      <h1 className="flex items-center gap-2 text-2xl font-bold">
+        <PackageSearch />
+        Products Data{" "}
+        <span className="font-base text-gray-500">({myProducts.length})</span>
+      </h1>
+      <p className="mb-6 text-gray-500">Manage your product data</p>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {myProducts.map((product) => (
+          <Card key={product.id} className="flex flex-col">
+            <CardHeader className="p-0">
+              <Image
+                src={product.imageUrl ?? "https://placehold.co/300x200"}
+                alt={product.name}
+                className="h-auto w-full rounded-lg object-cover"
+                width={100}
+                height={100}
+              />
+            </CardHeader>
+            <CardContent className="flex-grow p-4">
+              <div className="mb-2 flex items-start justify-between">
+                <h2 className="text-xl font-semibold">
+                  {product.name} testing
+                </h2>
+                {product.badge && (
+                  <Badge variant="secondary" className="ml-2">
+                    {product.badge}
+                  </Badge>
+                )}
               </div>
-            ))}
-          </Masonry>
-        </ResponsiveMasonry>
-      </CardContent>
-      <CardFooter>
-        <div className="text-xs text-muted-foreground">
-          Showing <strong>1-10</strong> of <strong>{[1, 2].length}</strong>{" "}
-          products
-        </div>
-      </CardFooter>
-    </Card>
+              <p className="mb-2 text-sm text-muted-foreground">
+                {product.description}
+              </p>
+              <p className="text-lg font-bold">${product.price.toFixed(2)}</p>
+            </CardContent>
+            <CardFooter className="p-4 pt-0">
+              <Button className="w-full">Add to Cart</Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+      <NoData
+        name="Product"
+        shouldRender={myProducts.length === 0}
+        createPathUrl="?form_products=true&type=create"
+        title="You don't have any product yet!"
+      />
+    </div>
   );
 }

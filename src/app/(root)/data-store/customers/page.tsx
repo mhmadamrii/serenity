@@ -12,7 +12,7 @@ export default function CustomersPage({
 }) {
   return (
     <>
-      <DataStoreHeader headerName="customers" />
+      <DataStoreHeader headerName="contacts" />
       <Suspense fallback={<h1>Loading streaming</h1>}>
         <Customers />
       </Suspense>
