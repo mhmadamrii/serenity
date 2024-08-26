@@ -55,7 +55,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function FormCustomer() {
+export function FormCustomer({ open }: { open: boolean }) {
   const router = useRouter();
   const [uploadedImage, setUploadedImage] = useState<string | StaticImport>("");
 
@@ -93,7 +93,7 @@ export function FormCustomer() {
         toast.success("Successfully edit customer!");
         if (res) {
           router.refresh();
-          await new Promise((res, _) => setTimeout(res, 200));
+          await new Promise((res, _) => setTimeout(res, 500));
           router.back();
         }
       },
@@ -134,11 +134,13 @@ export function FormCustomer() {
       } else {
         form.setValue("status", "not_active");
       }
+    } else {
+      form.reset();
     }
   }, [data]);
 
   return (
-    <Dialog defaultOpen={true} onOpenChange={() => router.back()}>
+    <Dialog open={open} onOpenChange={() => router.back()}>
       <DialogContent className="min-h-full min-w-full sm:min-h-[300px] sm:min-w-[650px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

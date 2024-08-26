@@ -43,6 +43,7 @@ const routes = [
 export function Navigation() {
   const router = useRouter();
   const pathname = usePathname();
+  console.log("pathname", pathname);
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b px-4 backdrop-blur-sm md:px-6">
@@ -53,7 +54,7 @@ export function Navigation() {
             "flex items-center gap-2 text-lg font-semibold md:text-base",
           )}
         >
-          <Atom className="animate-spin-slow h-6 w-6" />
+          <Atom className="h-6 w-6 animate-spin-slow" />
           <span className="sr-only">Acme Inc</span>
         </Link>
 
@@ -62,7 +63,7 @@ export function Navigation() {
             key={idx}
             href={item.path}
             className={cn("text-foreground transition-colors", {
-              "font-semibold text-red-500": pathname == item.path,
+              "font-semibold text-red-500": pathname.includes(item.path),
             })}
           >
             {item.name}
