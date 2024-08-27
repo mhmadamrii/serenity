@@ -45,7 +45,7 @@ const FormSchema = z.object({
   }),
   stock: z.coerce.number(),
   price: z.coerce.number(),
-  customerId: z.coerce.number(),
+  contactId: z.coerce.number(),
   seller: z.string().min(1, {
     message: "Seller name must be at least 2 characters.",
   }),
@@ -65,16 +65,18 @@ export function FormProduct({ open }: { open: boolean }) {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
-      customerId: 0,
+      contactId: 0,
       price: 0,
       stock: 0,
       seller: "",
     },
   });
 
-  const { data: customerLists } = api.customer.getCustomers.useQuery();
+  const { data: customerLists } = api.contact.getContacts.useQuery({
+    userId: "",
+  });
 
-  const { data } = api.customer.getCustomerById.useQuery({
+  const { data } = api.contact.getContactById.useQuery({
     id: idUser ?? "13",
   });
 
@@ -110,8 +112,8 @@ export function FormProduct({ open }: { open: boolean }) {
       stock: data.stock,
       price: data.price,
       seller: data.seller,
-      customerId: data.customerId,
       description: data.description,
+      contactId: data.contactId,
     };
     console.log("rebuildBody", rebuildBody);
 

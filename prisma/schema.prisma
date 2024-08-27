@@ -74,11 +74,12 @@ model Product {
     stock       Int
     price       Float
     seller      String
-    contactId   Int
     imageUrl    String?
     badge       String?
     description String
-    customer    Contact @relation(fields: [contactId], references: [id])
+
+    contactId Int
+    contact   Contact @relation(fields: [contactId], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

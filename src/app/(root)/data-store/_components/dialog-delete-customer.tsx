@@ -25,7 +25,7 @@ export function DialogDeleteCustomer({
   setDeleteId: React.Dispatch<React.SetStateAction<string>>;
   refresh: () => void;
 }) {
-  const { mutate } = api.customer.deleteCustomer.useMutation({
+  const { mutate } = api.contact.deleteContact.useMutation({
     onSuccess: () => {
       toast.success("Successfully delete customer");
       refresh();

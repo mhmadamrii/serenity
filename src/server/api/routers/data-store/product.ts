@@ -27,7 +27,7 @@ export const productRouter = createTRPCRouter({
         stock: z.number(),
         price: z.number(),
         seller: z.string(),
-        customerId: z.number(),
+        contactId: z.number(),
         description: z.string(),
       }),
     )
@@ -39,7 +39,7 @@ export const productRouter = createTRPCRouter({
             stock: input.stock,
             price: input.price,
             seller: input.seller,
-            customerId: input.customerId,
+            contactId: input.contactId,
             description: input.description,
           },
         });
@@ -63,7 +63,7 @@ export const productRouter = createTRPCRouter({
         stock: z.number(),
         price: z.number(),
         seller: z.string(),
-        customerId: z.number(),
+        contactId: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -81,7 +81,7 @@ export const productRouter = createTRPCRouter({
             stock: input.stock,
             price: input.price,
             seller: input.seller,
-            customerId: input.customerId,
+            contactId: input.contactId,
           },
         });
 
@@ -111,7 +111,7 @@ export const productRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const id = typeof input.id === "string" ? parseInt(input.id) : input.id;
       console.log("input id", id);
-      return await ctx.db.customer.delete({
+      return await ctx.db.contact.delete({
         where: {
           id,
         },
