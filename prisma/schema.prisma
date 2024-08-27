@@ -12,26 +12,32 @@ datasource db {
 }
 
 model User {
-    id        String     @id @default(cuid())
-    email     String     @unique
-    password  String
+    id       String @id @default(cuid())
+    email    String @unique
+    password String
+
     invoices  Invoice[]
     Purchase  Purchase[]
+    Contact   Contact[]
     Profile   Profile?
     profileId Int?       @unique
 }
 
-model Customer {
+model Contact {
     id       Int       @id @default(autoincrement())
     name     String
     address  String
     imageUrl String?   @default("")
     email    String?
     isActive Boolean   @default(false)
+    userId   String
+    user     User      @relation(fields: [userId], references: [id])
     Product  Product[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([name])
 }
 
 model Profile {
@@ -63,16 +69,16 @@ model Purchase {
 }
 
 model Product {
-    id          Int      @id @default(autoincrement())
+    id          Int     @id @default(autoincrement())
     name        String
     stock       Int
     price       Float
     seller      String
-    customerId  Int
+    contactId   Int
     imageUrl    String?
     badge       String?
     description String
-    customer    Customer @relation(fields: [customerId], references: [id])
+    customer    Contact @relation(fields: [contactId], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

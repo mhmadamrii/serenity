@@ -3,24 +3,26 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-export const customerRouter = createTRPCRouter({
-  createCustomer: publicProcedure
+export const contactRouter = createTRPCRouter({
+  createContact: publicProcedure
     .input(
       z.object({
         name: z.string().min(1),
         email: z.string(),
         address: z.string(),
+        userId: z.string(),
         status: z.boolean(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const customer = await ctx.db.customer.create({
+        const customer = await ctx.db.contact.create({
           data: {
             name: input.name,
             email: input.email,
             address: input.address,
             isActive: input.status,
+            userId: input.userId,
           },
         });
 
@@ -45,7 +47,7 @@ export const customerRouter = createTRPCRouter({
       }
     }),
 
-  editCustomer: publicProcedure
+  editContact: publicProcedure
     .input(
       z.object({
         id: z.union([z.number(), z.null()]),
@@ -61,7 +63,7 @@ export const customerRouter = createTRPCRouter({
           return;
         }
 
-        const customer = await ctx.db.customer.update({
+        const customer = await ctx.db.contact.update({
           where: {
             id: input.id,
           },
@@ -94,65 +96,41 @@ export const customerRouter = createTRPCRouter({
       }
     }),
 
-  getCustomers: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.db.customer.findMany({});
-  }),
+  getContacts: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.contact.findMany({
+        where: {
+          userId: input.userId,
+        },
+      });
+    }),
 
-  getCustomerById: publicProcedure
+  getContactById: publicProcedure
     .input(z.object({ id: z.union([z.string(), z.undefined()]) }))
     .query(async ({ ctx, input }) => {
       const id = typeof input.id === "string" ? parseInt(input.id) : input.id;
       console.log("input id", id);
-      return await ctx.db.customer.findUnique({
+      return await ctx.db.contact.findUnique({
         where: {
           id,
         },
       });
     }),
 
-  deleteCustomer: publicProcedure
+  deleteContact: publicProcedure
     .input(z.object({ id: z.union([z.string(), z.undefined()]) }))
     .mutation(async ({ ctx, input }) => {
       const id = typeof input.id === "string" ? parseInt(input.id) : input.id;
       console.log("input id", id);
-      return await ctx.db.customer.delete({
+      return await ctx.db.contact.delete({
         where: {
           id,
         },
       });
-    }),
-  // .input(
-  //   z.object({
-  //     name: z.string().min(1),
-  //     email: z.string(),
-  //     address: z.string(),
-  //   }),
-  // )
-  // .mutation(async ({ ctx, input }) => {
-  //   try {
-  //     const customer = await ctx.db.customer.findMany({});
-  //     console.log("list customers", customer);
-
-  //     return customer;
-  //   } catch (error) {
-  //     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-  //       throw new TRPCError({
-  //         code: "CONFLICT",
-  //         message: "Email address is already registered.",
-  //       });
-  //     }
-  //     throw new TRPCError({
-  //       code: "INTERNAL_SERVER_ERROR",
-  //       message: "An error occurred during registration.",
-  //     });
-  //   }
-  // }),
-
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
     }),
 });

@@ -38,7 +38,7 @@ const menuLists = [
 
 export default async function DataStore() {
   return (
-    <section className="flex w-full justify-between">
+    <section className="flex w-full flex-wrap justify-between sm:flex-nowrap">
       {menuLists.map((menu) => (
         <Link key={menu.id} href={menu.path} className="w-full">
           <Card className="m-5 hover:bg-slate-100 hover:dark:bg-slate-900">

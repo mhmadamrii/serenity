@@ -1,6 +1,5 @@
 import { Products } from "../_components/parts/products";
 import { Suspense } from "react";
-import { Customers } from "../_components/parts/customers";
 import { DataStoreHeader } from "../_components/data-store-header";
 import { FormProduct } from "../_components/forms/form-product";
 import { ProductSkeleton } from "~/components/skeletons/product-skeleton";

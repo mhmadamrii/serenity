@@ -39,11 +39,11 @@ interface ICustomers {
   updatedAt: Date;
 }
 
-export function TableCustomers({
-  customers,
+export function TableContacts({
+  contacts,
   currentTab,
 }: {
-  customers: ICustomers[];
+  contacts: ICustomers[];
   currentTab: string;
 }) {
   const router = useRouter();
@@ -53,7 +53,7 @@ export function TableCustomers({
     <>
       <Table
         className={cn("", {
-          hidden: customers.length === 0,
+          hidden: contacts.length === 0,
         })}
       >
         <TableHeader>
@@ -70,7 +70,7 @@ export function TableCustomers({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {customers.map((customer) => (
+          {contacts.map((customer) => (
             <TableRow key={customer.id}>
               <TableCell className="font-medium">
                 <Image

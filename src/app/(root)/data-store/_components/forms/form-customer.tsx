@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { api } from "~/trpc/react";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
@@ -57,6 +58,7 @@ const FormSchema = z.object({
 
 export function FormCustomer({ open }: { open: boolean }) {
   const router = useRouter();
+  const session = useSession() as unknown as any;
   const [uploadedImage, setUploadedImage] = useState<string | StaticImport>("");
 
   const searchParams = useSearchParams();
@@ -72,11 +74,11 @@ export function FormCustomer({ open }: { open: boolean }) {
     },
   });
 
-  const { data } = api.customer.getCustomerById.useQuery({
+  const { data } = api.contact.getContactById.useQuery({
     id: idUser ?? "13",
   });
 
-  const { mutate, isPending } = api.customer.createCustomer.useMutation({
+  const { mutate, isPending } = api.contact.createContact.useMutation({
     onSuccess: () => {
       toast.success("Successfully create new customer!");
       form.reset();
@@ -88,7 +90,7 @@ export function FormCustomer({ open }: { open: boolean }) {
   });
 
   const { mutate: editCustomer, isPending: isPendingEdit } =
-    api.customer.editCustomer.useMutation({
+    api.contact.editContact.useMutation({
       onSuccess: async (res) => {
         toast.success("Successfully edit customer!");
         if (res) {
@@ -108,6 +110,7 @@ export function FormCustomer({ open }: { open: boolean }) {
       email: data.email,
       address: data.customer_address,
       status: data.status === "active",
+      userId: session?.data?.id,
     };
 
     switch (typeForm) {
@@ -185,7 +188,7 @@ export function FormCustomer({ open }: { open: boolean }) {
                 name="customer_name"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Customer Name</FormLabel>
+                    <FormLabel>Contact Name</FormLabel>
                     <FormControl>
                       <Input
                         disabled={!data && typeForm === "edit"}
@@ -227,7 +230,7 @@ export function FormCustomer({ open }: { open: boolean }) {
                 name="customer_address"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Customer Address</FormLabel>
+                    <FormLabel>Contact Address</FormLabel>
                     <FormControl>
                       <Input
                         disabled={!data && typeForm === "edit"}
@@ -254,7 +257,7 @@ export function FormCustomer({ open }: { open: boolean }) {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select customer status" />
+                          <SelectValue placeholder="Select contact status" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -272,8 +275,8 @@ export function FormCustomer({ open }: { open: boolean }) {
               {isPending || isPendingEdit
                 ? "Loading"
                 : idUser
-                  ? "Edit Customer"
-                  : "Create Customer"}
+                  ? "Edit Contact"
+                  : "Create Contact"}
             </Button>
           </form>
         </Form>

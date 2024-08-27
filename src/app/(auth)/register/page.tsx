@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import RetroGrid from "~/components/magicui/retro-grid";
+
 import { LoaderImage } from "~/components/loader/loader-image";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -46,15 +48,6 @@ export default function Register() {
     },
   });
 
-  const register = api.auth.register.useMutation({
-    onSuccess: (res) => {
-      toast.success("Register success!");
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
-
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setIsLoading(true);
     const response = await fetch("/api/auth/register", {
@@ -67,7 +60,6 @@ export default function Register() {
     if (result.error) {
       return toast.error(result.error);
     }
-    // register.mutate(data);
     toast.success("Account created!");
   }
 
@@ -187,6 +179,7 @@ export default function Register() {
           </form>
         </Form>
       </div>
+      <RetroGrid />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { Users } from "lucide-react";
 import { NoData } from "~/components/no-data/NoData";
-import { TableCustomers } from "../tables/table-customers";
+import { TableContacts } from "../tables/table-contacts";
+import { authOptions } from "~/lib/auth";
+import { getServerSession } from "next-auth";
 import { api } from "~/trpc/server";
 
 import {
@@ -16,9 +18,12 @@ interface IProps {
   currentTab?: string;
 }
 
-export async function Customers({ currentTab = "customers" }: IProps) {
+export async function Contacts({ currentTab = "contacts" }: IProps) {
   await new Promise((res, rej) => setTimeout(res, 1000));
-  const customers = await api.customer.getCustomers();
+  const session = (await getServerSession(authOptions)) as any;
+  const contacts = await api.contact.getContacts({
+    userId: session.id,
+  });
 
   return (
     <Card x-chunk="dashboard-06-chunk-0" className="m-5">
@@ -26,24 +31,24 @@ export async function Customers({ currentTab = "customers" }: IProps) {
         <CardTitle className="flex gap-2">
           <Users />
           Contact Data
-          <span className="font-base text-gray-500">({customers.length})</span>
+          <span className="font-base text-gray-500">({contacts.length})</span>
         </CardTitle>
         <CardDescription>
           Manage your contact and view their details.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <TableCustomers currentTab={currentTab} customers={customers} />
+        <TableContacts currentTab={currentTab} contacts={contacts} />
         <NoData
           name="Contact"
-          shouldRender={customers.length === 0}
-          createPathUrl="?form_customers=true&type=create"
+          shouldRender={contacts.length === 0}
+          createPathUrl="?form_contacts=true&type=create"
           title="You don't have any contact yet!"
         />
       </CardContent>
       <CardFooter>
         <div className="text-xs text-muted-foreground">
-          Showing <strong>1-10</strong> of <strong>{customers.length}</strong>{" "}
+          Showing <strong>1-10</strong> of <strong>{contacts.length}</strong>{" "}
           products
         </div>
       </CardFooter>

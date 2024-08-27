@@ -8,6 +8,15 @@ import { db } from "~/server/db";
 import type { User } from "@prisma/client";
 
 export const authOptions: NextAuthOptions = {
+  callbacks: {
+    async jwt({ token, user }) {
+      return { ...token, ...user };
+    },
+    // @ts-expect-error
+    async session({ session, user, token }) {
+      return token;
+    },
+  },
   session: {
     strategy: "jwt",
   },

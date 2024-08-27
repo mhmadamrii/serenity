@@ -178,7 +178,7 @@ export default function LandingPage() {
                     </li>
                   </ul>
                 </div>
-                <Button className="mt-6 w-full">Talk to our sales</Button>
+                <Button className="mt-6 w-full">Talk to Our Sales</Button>
               </Card>
             </div>
           </div>
