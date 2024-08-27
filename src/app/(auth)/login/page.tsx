@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { FaGoogle } from "react-icons/fa";
+import { LoaderImage } from "~/components/loader/loader-image";
 import { Button } from "~/components/ui/button";
 import { TRPCClientError } from "@trpc/client";
 import { Input } from "~/components/ui/input";
@@ -93,6 +94,7 @@ export default function Login() {
                         <Input
                           placeholder="john@gmail.com"
                           type="email"
+                          disabled={isPending}
                           {...field}
                           className="w-full"
                         />
@@ -114,6 +116,7 @@ export default function Login() {
                           <Input
                             placeholder="123456"
                             type="password"
+                            disabled={isPending}
                             {...field}
                             className="w-full"
                           />
@@ -131,7 +134,7 @@ export default function Login() {
                 </div>
               </div>
               <Button type="submit" className="w-full">
-                {isPending ? "Loading" : "Login"}
+                {isPending ? <LoaderImage /> : "Login"}
               </Button>
               <Button
                 type="button"

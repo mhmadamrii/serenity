@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import { Atom } from "lucide-react";
+import { Atom, MoveRight } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -14,7 +14,7 @@ export default function LandingPage() {
           className="flex items-center justify-center"
           prefetch={false}
         >
-          <Atom className="animate-spin-slow h-6 w-6" />
+          <Atom className="h-6 w-6 animate-spin-slow" />
           <span className="sr-only">Serenity Accounting</span>
         </Link>
         <nav className="ml-auto flex gap-2 sm:gap-3">
@@ -46,8 +46,11 @@ export default function LandingPage() {
                 <h2 className="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-3xl md:text-5xl xl:text-[3.3rem] 2xl:text-[3.6rem]">
                   Streamline Your Accounting with <span>SERENITY</span>
                 </h2>
-                <Button className="inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50">
-                  Get Started
+                <Button className="group inline-flex h-9 items-center justify-center rounded-md px-5 py-2 text-sm font-medium shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50">
+                  <Link href="/login" className="flex gap-2">
+                    Get Started
+                    <MoveRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                  </Link>
                 </Button>
               </div>
               <div className="flex flex-col items-start space-y-4">

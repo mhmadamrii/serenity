@@ -34,8 +34,10 @@ import {
 } from "~/components/ui/table";
 
 export default async function Dashboard() {
-  const session = await getServerSession(authOptions);
-  if (!session) {
+  const session = (await getServerSession(authOptions)) as any;
+  console.log("session", session);
+
+  if (session?.email === "" || !session) {
     redirect("/login");
   }
   return (

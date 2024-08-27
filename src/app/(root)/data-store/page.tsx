@@ -16,21 +16,21 @@ const menuLists = [
   {
     id: 1,
     title: "Contact",
-    desc: "Lorem ipsum dolor sit amet",
-    path: "/data-store/customers",
+    desc: "Manage your contact list and keep track of client information.",
+    path: "/data-store/contacts",
     icon: <Users size={100} />,
   },
   {
     id: 2,
     title: "Products",
-    desc: "Lorem ipsum dolor sit amet",
+    desc: "Browse and manage your inventory of products seamlessly.",
     path: "/data-store/products",
     icon: <ShoppingCart size={100} />,
   },
   {
     id: 3,
     title: "Taxes",
-    desc: "Lorem ipsum dolor sit amet",
+    desc: "Keep your tax records organized and up to date.",
     path: "/data-store/products",
     icon: <Receipt size={100} />,
   },
@@ -45,13 +45,12 @@ export default async function DataStore() {
             <CardHeader className="flex items-center justify-center">
               {menu.icon}
               <CardTitle className="flex gap-2">{menu.title} Data</CardTitle>
-              <CardDescription>
-                Manage your customer and view their details.
-              </CardDescription>
             </CardHeader>
             <CardContent>
               <Separator className="my-4" />
-              <div className="text-xs text-muted-foreground">{menu.desc}</div>
+              <CardDescription className="text-center">
+                {menu.desc}
+              </CardDescription>
             </CardContent>
             <CardFooter></CardFooter>
           </Card>

@@ -145,7 +145,7 @@ export function FormCustomer({ open }: { open: boolean }) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus />
-            {typeForm == "edit" ? "Edit Cutomer" : "New Customer"}
+            {typeForm == "edit" ? "Edit Contact" : "New Contact"}
           </DialogTitle>
           <DialogDescription>
             Fill out the details below to create a new invoice.

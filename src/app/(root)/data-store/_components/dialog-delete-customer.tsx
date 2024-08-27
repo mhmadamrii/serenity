@@ -2,6 +2,7 @@
 
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
 
 import {
   AlertDialog,
@@ -38,7 +39,10 @@ export function DialogDeleteCustomer({
       <AlertDialogTrigger asChild></AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle className="flex items-center gap-2">
+            <Trash2 />
+            Are you absolutely sure?
+          </AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete your
             customer and remove your data from our servers.

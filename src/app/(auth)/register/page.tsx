@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { LoaderImage } from "~/components/loader/loader-image";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useRouter } from "next/navigation";
@@ -34,8 +35,8 @@ const FormSchema = z.object({
 });
 
 export default function Register() {
-  const router = useRouter();
   const [isAgree, setIsAgree] = useState<CheckedState>(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -55,12 +56,14 @@ export default function Register() {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setIsLoading(true);
     const response = await fetch("/api/auth/register", {
       method: "POST",
       body: JSON.stringify(data),
     });
 
     const result = await response.json();
+    setIsLoading(false);
     if (result.error) {
       return toast.error(result.error);
     }
@@ -98,6 +101,7 @@ export default function Register() {
                     <FormControl>
                       <Input
                         type="email"
+                        disabled={isLoading}
                         placeholder="john@gmail.com"
                         {...field}
                         className="w-full"
@@ -119,6 +123,7 @@ export default function Register() {
                       <FormControl>
                         <Input
                           placeholder="123456"
+                          disabled={isLoading}
                           type="password"
                           {...field}
                           className="w-full"
@@ -141,6 +146,7 @@ export default function Register() {
                       <FormControl>
                         <Input
                           placeholder="123456"
+                          disabled={isLoading}
                           type="password"
                           {...field}
                           className="w-full"
@@ -176,7 +182,7 @@ export default function Register() {
               })}
               disabled={!isAgree}
             >
-              {register.isPending ? "Loading.." : "Sign Up"}
+              {isLoading ? <LoaderImage /> : "Sign Up"}
             </Button>
           </form>
         </Form>

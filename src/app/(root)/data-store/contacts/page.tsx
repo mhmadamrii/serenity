@@ -2,21 +2,22 @@ import { Suspense } from "react";
 import { Customers } from "../_components/parts/customers";
 import { FormCustomer } from "../_components/forms/form-customer";
 import { DataStoreHeader } from "../_components/data-store-header";
+import { ContactSkeleton } from "~/components/skeletons/contact-skeleton";
 
-export default function CustomersPage({
+export default async function CustomersPage({
   searchParams,
 }: {
   searchParams: {
-    form_customers: string;
+    form_contacts: string;
   };
 }) {
   return (
     <>
       <DataStoreHeader headerName="contacts" />
-      <Suspense fallback={<h1>Loading streaming</h1>}>
+      <Suspense fallback={<ContactSkeleton />}>
         <Customers />
       </Suspense>
-      <FormCustomer open={searchParams.form_customers === "true"} />
+      <FormCustomer open={searchParams.form_contacts === "true"} />
     </>
   );
 }

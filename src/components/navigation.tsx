@@ -5,12 +5,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { cn } from "~/lib/utils";
-import { CircleUser, Menu, Package2, Search, Atom } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { ModeToggle } from "./toggle-theme";
 import { signOut } from "next-auth/react";
+
+import {
+  CircleUser,
+  Menu,
+  Package2,
+  Search,
+  Atom,
+  UserRoundCog,
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -43,7 +51,6 @@ const routes = [
 export function Navigation() {
   const router = useRouter();
   const pathname = usePathname();
-  console.log("pathname", pathname);
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b px-4 backdrop-blur-sm md:px-6">
@@ -136,16 +143,19 @@ export function Navigation() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel className="flex items-center gap-1">
+              <UserRoundCog />
+              My Account
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/settings">Settings</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/settings">Supports</Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={async () => {
-                await signOut();
-              }}
-            >
+            <DropdownMenuItem onClick={() => signOut()}>
               Logout
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -10,16 +10,24 @@ export const authRouter = createTRPCRouter({
     .input(z.object({ email: z.string().min(1), password: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const hashedPassword = await bcrypt.hash(input.password, 10);
-        const user = await ctx.db.user.create({
-          data: {
+        const existUser = await ctx.db.user.findUnique({
+          where: {
             email: input.email,
-            password: hashedPassword,
           },
         });
+        console.log("exist user", existUser);
 
-        return user;
+        const hashedPassword = await bcrypt.hash(input.password, 10);
+        // const user = await ctx.db.user.create({
+        //   data: {
+        //     email: input.email,
+        //     password: hashedPassword,
+        //   },
+        // });
+
+        // return user;
       } catch (error) {
+        console.log("error prisma", error);
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           if (
             error.code === "P2002" &&
