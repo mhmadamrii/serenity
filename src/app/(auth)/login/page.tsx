@@ -27,11 +27,11 @@ import {
 } from "~/components/ui/form";
 
 const FormSchema = z.object({
-  email: z.string({
-    required_error: "Email is required.",
+  email: z.string().min(1, {
+    message: "Email must be filled!",
   }),
-  password: z.string({
-    required_error: "Password is required",
+  password: z.string().min(1, {
+    message: "Password must be filled!",
   }),
 });
 

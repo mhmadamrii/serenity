@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 import { NextAuthOptions } from "next-auth";
 import { db } from "~/server/db";
+import type { User } from "@prisma/client";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -30,22 +31,22 @@ export const authOptions: NextAuthOptions = {
           where: {
             email: credentials?.email,
           },
-        })) as any;
+        })) as User;
 
-        const passwordMatch = await bcrypt.compare(
-          // @ts-expect-error
-          credentials?.password,
+        if (!user) {
+          throw new Error("User not found!");
+        }
+
+        const isPasswordValid = await bcrypt.compare(
+          credentials?.password as string | Buffer,
           user?.password,
         );
 
-        if (passwordMatch) {
-          return {
-            id: user?.id,
-            email: user?.email,
-          };
+        if (!isPasswordValid) {
+          throw new Error("Incorrect password!");
         }
 
-        return null;
+        return { id: user.id, email: user.email };
       },
     }),
   ],
