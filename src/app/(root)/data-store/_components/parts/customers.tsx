@@ -26,6 +26,7 @@ export async function Customers({ currentTab = "customers" }: IProps) {
         <CardTitle className="flex gap-2">
           <Users />
           Contact Data
+          <span className="font-base text-gray-500">({customers.length})</span>
         </CardTitle>
         <CardDescription>
           Manage your contact and view their details.

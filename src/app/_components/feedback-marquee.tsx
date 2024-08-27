@@ -1,44 +1,44 @@
-import { cn } from "~/lib/utils";
 import Marquee from "~/components/magicui/marquee";
+import { cn } from "~/lib/utils";
 
 const reviews = [
   {
     name: "Jack",
     username: "@jack",
-    body: "I've never seen anything like this before. It's amazing. I love it.",
-    img: "https://avatar.vercel.sh/jack",
+    body: "Serenity has completely transformed how I manage my accounting tasks. It's intuitive and powerful.",
+    img: "https://i.pravatar.cc/300?img=1",
   },
   {
     name: "Jill",
     username: "@jill",
-    body: "I don't know what to say. I'm speechless. This is amazing.",
-    img: "https://avatar.vercel.sh/jill",
+    body: "I've tried many accounting software solutions, but Serenity stands out for its ease of use and efficiency.",
+    img: "https://i.pravatar.cc/300?img=2",
   },
   {
     name: "John",
     username: "@john",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/john",
+    body: "As an accountant, I need software I can rely on. Serenity delivers every time, making my job easier.",
+    img: "https://i.pravatar.cc/300?img=3",
   },
   {
     name: "Jane",
     username: "@jane",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/jane",
+    body: "Serenity is a game-changer for accountants. The interface is clean, and the features are exactly what I need.",
+    img: "https://i.pravatar.cc/300?img=4",
   },
   {
     name: "Jenny",
     username: "@jenny",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/jenny",
+    body: "I was skeptical at first, but Serenity has exceeded my expectations. It's now a vital part of my workflow.",
+    img: "https://i.pravatar.cc/300?img=5",
   },
   {
     name: "James",
     username: "@james",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/james",
+    body: "The best part about Serenity? It just works. No fuss, no hassle—just results.",
+    img: "https://i.pravatar.cc/300?img=6",
   },
-];
+] as const;
 
 const firstRow = reviews.slice(0, reviews.length / 2);
 const secondRow = reviews.slice(reviews.length / 2);
@@ -78,9 +78,24 @@ const ReviewCard = ({
   );
 };
 
-export default function MarqueeDemo() {
+export function FeedbackMarquee() {
   return (
-    <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-background md:shadow-xl">
+    <div className="relative flex h-[620px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-background md:shadow-xl">
+      <div className="mb-10 mt-8 flex w-full flex-col gap-2 text-center">
+        <h1 className="text-center text-3xl font-extrabold">
+          What Accountants Are Saying About Serenity
+        </h1>
+        <div>
+          <p className="font-bold text-gray-400">
+            Don't just take our word for it. Here's what real
+          </p>
+          <p className="font-bold text-gray-400">
+            people are saying about{" "}
+            <span className="font-extrabold">SERENITY</span>
+          </p>
+        </div>
+      </div>
+
       <Marquee pauseOnHover className="[--duration:20s]">
         {firstRow.map((review) => (
           <ReviewCard key={review.username} {...review} />

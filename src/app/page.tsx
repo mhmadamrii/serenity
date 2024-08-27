@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Atom, MoveRight } from "lucide-react";
+import { FeedbackMarquee } from "./_components/feedback-marquee";
 
 export default function LandingPage() {
   return (
@@ -73,6 +74,9 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+        </section>
+        <section className="w-full">
+          <FeedbackMarquee />
         </section>
         <section className="w-full bg-muted py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
@@ -174,7 +178,7 @@ export default function LandingPage() {
                     </li>
                   </ul>
                 </div>
-                <Button className="mt-6 w-full">Get Started</Button>
+                <Button className="mt-6 w-full">Talk to our sales</Button>
               </Card>
             </div>
           </div>
