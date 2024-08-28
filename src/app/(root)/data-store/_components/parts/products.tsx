@@ -10,7 +10,9 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/server";
 import { NoData } from "~/components/no-data/NoData";
-import { PackageSearch } from "lucide-react";
+import { PackageSearch, PencilIcon, Trash2 } from "lucide-react";
+import { ImagePlaceholder } from "~/components/image-placeholder";
+import { cn } from "~/lib/utils";
 
 export async function Products() {
   await new Promise((res, rej) => setTimeout(res, 1000));
@@ -25,17 +27,21 @@ export async function Products() {
         <span className="font-base text-gray-500">({myProducts.length})</span>
       </h1>
       <p className="mb-6 text-gray-500">Manage your product data</p>
-      <div className="gap-2sm:grid-cols-2 grid grid-cols-1 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {myProducts.map((product) => (
-          <Card key={product.id} className="flex w-[300] flex-col">
+          <Card key={product.id} className="flex h-[300px] w-[300px] flex-col">
             <CardHeader className="p-0">
-              <Image
-                src={product.imageUrl ?? ""}
-                alt={product.name}
-                className="h-auto w-full rounded-lg object-cover"
-                width={100}
-                height={100}
-              />
+              {!product?.imageUrl ? (
+                <ImagePlaceholder name={product.name} />
+              ) : (
+                <Image
+                  src={product.imageUrl ?? ""}
+                  alt={product.name}
+                  className="h-auto rounded-lg"
+                  width={100}
+                  height={100}
+                />
+              )}
             </CardHeader>
             <CardContent className="flex-grow p-4">
               <div className="mb-2 flex items-start justify-between">
@@ -51,8 +57,23 @@ export async function Products() {
               </p>
               <p className="text-lg font-bold">${product.price.toFixed(2)}</p>
             </CardContent>
-            <CardFooter className="p-4 pt-0">
-              <Button className="w-full">Add to Cart</Button>
+            <CardFooter className="flex gap-1 p-4 pt-0">
+              <div
+                className={cn(
+                  "flex h-full flex-grow items-center justify-center rounded-sm bg-green-200 px-2 text-green-600",
+                  {
+                    "bg-red-200 text-red-600": !product.status,
+                  },
+                )}
+              >
+                {product.status ? "Active" : "Inactive"}
+              </div>
+              <Button>
+                <PencilIcon />
+              </Button>
+              <Button>
+                <Trash2 />
+              </Button>
             </CardFooter>
           </Card>
         ))}
