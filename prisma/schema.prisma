@@ -73,8 +73,8 @@ model Product {
     name        String
     stock       Int
     price       Float
-    seller      String
     imageUrl    String?
+    status      Boolean @default(false)
     badge       String?
     description String
 

@@ -1,7 +1,7 @@
 "use client";
 
-import type { Product } from "@prisma/client";
 import { Textarea } from "~/components/ui/textarea";
+import { ProductUploader } from "~/components/uploaders/product-uploader";
 import { LoaderImage } from "~/components/loader/loader-image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { PackageSearch } from "lucide-react";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 import {
   Dialog,
@@ -46,9 +47,6 @@ const FormSchema = z.object({
   stock: z.coerce.number(),
   price: z.coerce.number(),
   contactId: z.coerce.number(),
-  seller: z.string().min(1, {
-    message: "Seller name must be at least 2 characters.",
-  }),
   description: z.string().min(2, {
     message: "Product description must be at least 2 characters.",
   }),
@@ -56,6 +54,9 @@ const FormSchema = z.object({
 
 export function FormProduct({ open }: { open: boolean }) {
   const router = useRouter();
+  const { data: sessionData } = useSession() as any;
+  const [isClickedUpload, setIsClickedUpload] = useState(false);
+  const [savedImageUrl, setSavedImageUrl] = useState("");
 
   const searchParams = useSearchParams();
   const idUser = searchParams.get("id") as "string";
@@ -65,15 +66,14 @@ export function FormProduct({ open }: { open: boolean }) {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
-      contactId: 0,
+      contactId: 5,
       price: 0,
       stock: 0,
-      seller: "",
     },
   });
 
-  const { data: customerLists } = api.contact.getContacts.useQuery({
-    userId: "",
+  const { data: supplierLists } = api.contact.getContacts.useQuery({
+    userId: sessionData?.id,
   });
 
   const { data } = api.contact.getContactById.useQuery({
@@ -85,6 +85,7 @@ export function FormProduct({ open }: { open: boolean }) {
       toast.success("Successfully create new product!");
       form.reset();
       router.refresh();
+      setIsClickedUpload(false);
     },
     onError: () => {
       toast.error("Failed to create new product");
@@ -106,16 +107,20 @@ export function FormProduct({ open }: { open: boolean }) {
       },
     });
 
+  function saveImageUrl(url: string) {
+    setSavedImageUrl(url);
+  }
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    setIsClickedUpload(true);
     const rebuildBody = {
       name: data.name,
       stock: data.stock,
       price: data.price,
-      seller: data.seller,
       description: data.description,
       contactId: data.contactId,
+      imageUrl: savedImageUrl,
     };
-    console.log("rebuildBody", rebuildBody);
 
     switch (typeForm) {
       case "create":
@@ -140,9 +145,6 @@ export function FormProduct({ open }: { open: boolean }) {
       form.reset();
     }
   }, [data]);
-
-  console.log("form", form.formState.errors);
-  console.log("form", form.getValues("seller"));
 
   return (
     <Dialog open={open} onOpenChange={() => router.back()}>
@@ -225,7 +227,7 @@ export function FormProduct({ open }: { open: boolean }) {
 
               <FormField
                 control={form.control}
-                name="seller"
+                name="contactId"
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel>Supplier</FormLabel>
@@ -240,7 +242,7 @@ export function FormProduct({ open }: { open: boolean }) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {customerLists?.map((customer) => (
+                        {supplierLists?.map((customer) => (
                           <SelectItem
                             key={customer.id}
                             value={customer.id.toString()}
@@ -256,6 +258,14 @@ export function FormProduct({ open }: { open: boolean }) {
               />
             </section>
 
+            <section>
+              <ProductUploader
+                isClickedUpload={isClickedUpload}
+                isStillHasErrors={
+                  Object.keys(form.formState.errors).length >= 1
+                }
+              />
+            </section>
             <section className="mt-[100px]">
               <FormField
                 control={form.control}

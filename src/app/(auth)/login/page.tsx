@@ -38,7 +38,7 @@ const FormSchema = z.object({
 export default function Login() {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
-  const { data } = useSession();
+  const { data } = useSession() as any;
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -64,10 +64,11 @@ export default function Login() {
     toast.error(response?.error);
     setIsPending(false);
   }
+  console.log("data", data);
 
   useEffect(() => {
-    if (data?.user) {
-      router.push("/dashboard");
+    if (data?.email !== "") {
+      // router.push("/dashboard");
     }
   }, [data]);
 

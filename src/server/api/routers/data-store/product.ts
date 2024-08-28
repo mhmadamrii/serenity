@@ -26,9 +26,9 @@ export const productRouter = createTRPCRouter({
         name: z.string().min(1),
         stock: z.number(),
         price: z.number(),
-        seller: z.string(),
         contactId: z.number(),
         description: z.string(),
+        imageUrl: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -38,9 +38,9 @@ export const productRouter = createTRPCRouter({
             name: input.name,
             stock: input.stock,
             price: input.price,
-            seller: input.seller,
             contactId: input.contactId,
             description: input.description,
+            imageUrl: input.imageUrl,
           },
         });
 
@@ -62,7 +62,6 @@ export const productRouter = createTRPCRouter({
         name: z.string().min(1),
         stock: z.number(),
         price: z.number(),
-        seller: z.string(),
         contactId: z.number(),
       }),
     )
@@ -80,7 +79,6 @@ export const productRouter = createTRPCRouter({
             name: input.name,
             stock: input.stock,
             price: input.price,
-            seller: input.seller,
             contactId: input.contactId,
           },
         });

@@ -37,7 +37,7 @@ export default async function Dashboard() {
   const session = (await getServerSession(authOptions)) as any;
   console.log("session", session);
 
-  if (session?.email === "" || !session) {
+  if (session?.email === "") {
     redirect("/login");
   }
   return (

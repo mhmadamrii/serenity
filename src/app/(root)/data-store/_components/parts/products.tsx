@@ -15,6 +15,7 @@ import { PackageSearch } from "lucide-react";
 export async function Products() {
   await new Promise((res, rej) => setTimeout(res, 1000));
   const myProducts = await api.product.getProducts();
+  console.log("myProducts", myProducts);
 
   return (
     <div className="container mx-auto p-4">
@@ -24,12 +25,12 @@ export async function Products() {
         <span className="font-base text-gray-500">({myProducts.length})</span>
       </h1>
       <p className="mb-6 text-gray-500">Manage your product data</p>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="gap-2sm:grid-cols-2 grid grid-cols-1 lg:grid-cols-4">
         {myProducts.map((product) => (
-          <Card key={product.id} className="flex flex-col">
+          <Card key={product.id} className="flex w-[300] flex-col">
             <CardHeader className="p-0">
               <Image
-                src={product.imageUrl ?? "https://placehold.co/300x200"}
+                src={product.imageUrl ?? ""}
                 alt={product.name}
                 className="h-auto w-full rounded-lg object-cover"
                 width={100}
@@ -38,9 +39,7 @@ export async function Products() {
             </CardHeader>
             <CardContent className="flex-grow p-4">
               <div className="mb-2 flex items-start justify-between">
-                <h2 className="text-xl font-semibold">
-                  {product.name} testing
-                </h2>
+                <h2 className="text-xl font-semibold">{product.name}</h2>
                 {product.badge && (
                   <Badge variant="secondary" className="ml-2">
                     {product.badge}
