@@ -37,9 +37,9 @@ export function TableProducts({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 content-center justify-items-center gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {myProducts.map((product) => (
-          <Card key={product.id} className="flex h-[300px] w-[300px] flex-col">
+          <Card key={product.id} className="flex h-[340px] w-[300px] flex-col">
             <CardHeader className="p-0">
               {!product?.imageUrl ? (
                 <ImagePlaceholder name={product.name} />
@@ -53,10 +53,10 @@ export function TableProducts({
                 />
               )}
             </CardHeader>
-            <CardContent className="flex-grow p-4">
+            <CardContent className="flex-grow px-4 py-0">
               <div className="mb-2 flex items-start justify-between">
                 <GradualSpacing
-                  className="font-display text-center text-xl font-bold tracking-[-0.1em]  text-black dark:text-white md:text-3xl md:leading-[1rem]"
+                  className="font-display text-center text-xl font-bold tracking-[-0.1em] text-black dark:text-white md:text-3xl md:leading-[1rem]"
                   text={product.name}
                 />
                 {product.badge && (
@@ -65,7 +65,7 @@ export function TableProducts({
                   </Badge>
                 )}
               </div>
-              <p className="mb-2 text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 {product.description}
               </p>
               <p className="mb-2 text-sm text-muted-foreground">
@@ -87,8 +87,11 @@ export function TableProducts({
               <Button onClick={() => {}}>
                 <PencilIcon />
               </Button>
-              <Button onClick={() => setDeleteId(product.id.toString())}>
-                <Trash2 />
+              <Button
+                className="bg-red-100"
+                onClick={() => setDeleteId(product.id.toString())}
+              >
+                <Trash2 color="red" />
               </Button>
             </CardFooter>
           </Card>

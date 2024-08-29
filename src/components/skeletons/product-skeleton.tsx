@@ -1,8 +1,10 @@
 import loading from "../../../public/svg/3-dots-move.svg";
 import Image from "next/image";
 
+import { PackageSearch } from "lucide-react";
 import { Button } from "../ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
+
 import {
   Card,
   CardContent,
@@ -13,14 +15,14 @@ import {
 export function ProductSkeleton() {
   return (
     <div className="container w-full">
-      <div>
-        <h1 className="mb-6 text-center text-2xl font-bold sm:text-start">
-          Products Data
-        </h1>
-      </div>
+      <h1 className="mt-2 flex items-center gap-2 text-2xl font-bold">
+        <PackageSearch />
+        Products Data <span className="font-base text-gray-500">(0)</span>
+      </h1>
+      <p className="mb-4 text-gray-500">Manage your product data</p>
       <div className="flex flex-wrap justify-center gap-2 sm:justify-between">
-        {Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]).map((item) => (
-          <Card key={item} className="my-3 flex w-[300px] flex-col">
+        {Array.from([1, 2, 3, 4, 5, 6, 7, 8]).map((item) => (
+          <Card key={item} className="my-0 flex w-[300px] flex-col">
             <CardHeader className="flex w-full items-center justify-center p-0">
               <Skeleton className="h-[100px] w-[100%]" />
             </CardHeader>

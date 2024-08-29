@@ -9,12 +9,12 @@ export function ImagePlaceholder({ name }: { name: string }) {
   }, [name]);
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full pb-4 pt-0">
       <h1
         className="rounded-t-lg text-center text-8xl font-bold"
         style={{ backgroundColor: `#${randomColor}` }}
       >
-        {firstChar[0]}
+        {firstChar[0]?.toUpperCase()}
       </h1>
     </div>
   );

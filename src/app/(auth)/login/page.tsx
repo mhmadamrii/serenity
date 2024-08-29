@@ -68,7 +68,7 @@ export default function Login() {
 
   useEffect(() => {
     if (data?.email !== "") {
-      // router.push("/dashboard");
+      router.push("/dashboard");
     }
   }, [data]);
 
