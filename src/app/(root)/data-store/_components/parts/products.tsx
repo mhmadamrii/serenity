@@ -1,4 +1,6 @@
+import GradualSpacing from "~/components/magicui/gradual-spacing";
 import Image from "next/image";
+
 import {
   Card,
   CardContent,
@@ -13,11 +15,15 @@ import { NoData } from "~/components/no-data/NoData";
 import { PackageSearch, PencilIcon, Trash2 } from "lucide-react";
 import { ImagePlaceholder } from "~/components/image-placeholder";
 import { cn } from "~/lib/utils";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/lib/auth";
 
 export async function Products() {
+  const session = (await getServerSession(authOptions)) as any;
   await new Promise((res, rej) => setTimeout(res, 1000));
-  const myProducts = await api.product.getProducts();
-  console.log("myProducts", myProducts);
+  const myProducts = await api.product.getProducts({
+    userId: session?.id,
+  });
 
   return (
     <div className="container mx-auto p-4">
@@ -45,7 +51,10 @@ export async function Products() {
             </CardHeader>
             <CardContent className="flex-grow p-4">
               <div className="mb-2 flex items-start justify-between">
-                <h2 className="text-xl font-semibold">{product.name}</h2>
+                <GradualSpacing
+                  className="font-display text-center text-xl font-bold tracking-[-0.1em]  text-black dark:text-white md:text-3xl md:leading-[1rem]"
+                  text={product.name}
+                />
                 {product.badge && (
                   <Badge variant="secondary" className="ml-2">
                     {product.badge}

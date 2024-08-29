@@ -120,6 +120,7 @@ export function FormProduct({ open }: { open: boolean }) {
       description: data.description,
       contactId: data.contactId,
       imageUrl: savedImageUrl,
+      userId: sessionData?.id,
     };
 
     switch (typeForm) {

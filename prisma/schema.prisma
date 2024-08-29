@@ -16,11 +16,13 @@ model User {
     email    String @unique
     password String
 
-    invoices  Invoice[]
-    Purchase  Purchase[]
-    Contact   Contact[]
+    invoices Invoice[]
+    Purchase Purchase[]
+    Contact  Contact[]
+    products Product[]
+
     Profile   Profile?
-    profileId Int?       @unique
+    profileId Int?     @unique
 }
 
 model Contact {
@@ -77,6 +79,9 @@ model Product {
     status      Boolean @default(false)
     badge       String?
     description String
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
 
     contactId Int
     contact   Contact @relation(fields: [contactId], references: [id])

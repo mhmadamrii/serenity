@@ -1,12 +1,23 @@
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { Input } from "postcss";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const productRouter = createTRPCRouter({
-  getProducts: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.db.product.findMany({});
-  }),
+  getProducts: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.product.findMany({
+        where: {
+          userId: input.userId,
+        },
+      });
+    }),
 
   getProductById: publicProcedure
     .input(z.object({ id: z.union([z.string(), z.undefined()]) }))
@@ -29,6 +40,7 @@ export const productRouter = createTRPCRouter({
         contactId: z.number(),
         description: z.string(),
         imageUrl: z.string().optional(),
+        userId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -41,6 +53,7 @@ export const productRouter = createTRPCRouter({
             contactId: input.contactId,
             description: input.description,
             imageUrl: input.imageUrl,
+            userId: input.userId,
           },
         });
 

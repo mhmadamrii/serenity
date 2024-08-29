@@ -64,6 +64,7 @@ export function FormCustomer({ open }: { open: boolean }) {
   const searchParams = useSearchParams();
   const idUser = searchParams.get("id") as "string";
   const typeForm = searchParams.get("type");
+  console.log("session", session);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
