@@ -1,8 +1,13 @@
+import { useMemo } from "react";
+
 export function ImagePlaceholder({ name }: { name: string }) {
   const firstChar = name.split("");
-  const randomColor = Math.floor(Math.random() * 16777215)
-    .toString(16)
-    .padStart(6, "0"); // Ensure it's always 6 digits
+  const randomColor = useMemo(() => {
+    return Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, "0"); // Ensure it's always 6 digits
+  }, [name]);
+
   return (
     <div className="h-full w-full">
       <h1

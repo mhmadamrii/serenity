@@ -16,6 +16,13 @@ export const productRouter = createTRPCRouter({
         where: {
           userId: input.userId,
         },
+        include: {
+          contact: {
+            select: {
+              name: true,
+            },
+          },
+        },
       });
     }),
 
@@ -41,6 +48,7 @@ export const productRouter = createTRPCRouter({
         description: z.string(),
         imageUrl: z.string().optional(),
         userId: z.string(),
+        status: z.boolean(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -54,6 +62,7 @@ export const productRouter = createTRPCRouter({
             description: input.description,
             imageUrl: input.imageUrl,
             userId: input.userId,
+            status: input.status,
           },
         });
 
@@ -121,8 +130,7 @@ export const productRouter = createTRPCRouter({
     .input(z.object({ id: z.union([z.string(), z.undefined()]) }))
     .mutation(async ({ ctx, input }) => {
       const id = typeof input.id === "string" ? parseInt(input.id) : input.id;
-      console.log("input id", id);
-      return await ctx.db.contact.delete({
+      return await ctx.db.product.delete({
         where: {
           id,
         },

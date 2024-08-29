@@ -28,8 +28,9 @@ export function ProductUploader({
       setIsLoadingUpload(false);
       setFiles([]);
     },
-    onUploadError: () => {
-      toast.success("Upload failed!");
+    onUploadError: (res) => {
+      console.log("response", res);
+      toast.error("Upload failed!");
       setIsLoadingUpload(false);
     },
     onUploadBegin: () => {

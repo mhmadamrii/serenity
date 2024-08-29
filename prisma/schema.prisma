@@ -84,7 +84,7 @@ model Product {
     user   User   @relation(fields: [userId], references: [id])
 
     contactId Int
-    contact   Contact @relation(fields: [contactId], references: [id])
+    contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

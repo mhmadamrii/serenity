@@ -2,6 +2,7 @@
 
 import { Textarea } from "~/components/ui/textarea";
 import { ProductUploader } from "~/components/uploaders/product-uploader";
+import { Switch } from "~/components/ui/switch";
 import { LoaderImage } from "~/components/loader/loader-image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
@@ -50,6 +51,7 @@ const FormSchema = z.object({
   description: z.string().min(2, {
     message: "Product description must be at least 2 characters.",
   }),
+  status: z.boolean(),
 });
 
 export function FormProduct({ open }: { open: boolean }) {
@@ -69,6 +71,7 @@ export function FormProduct({ open }: { open: boolean }) {
       contactId: 5,
       price: 0,
       stock: 0,
+      status: false,
     },
   });
 
@@ -121,6 +124,7 @@ export function FormProduct({ open }: { open: boolean }) {
       contactId: data.contactId,
       imageUrl: savedImageUrl,
       userId: sessionData?.id,
+      status: data.status,
     };
 
     switch (typeForm) {
@@ -265,6 +269,23 @@ export function FormProduct({ open }: { open: boolean }) {
                 isStillHasErrors={
                   Object.keys(form.formState.errors).length >= 1
                 }
+              />
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem className="mt-2 flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Active</FormLabel>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
               />
             </section>
             <section className="mt-[100px]">

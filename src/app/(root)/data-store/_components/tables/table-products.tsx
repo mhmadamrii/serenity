@@ -1,114 +1,105 @@
 "use client";
 
 import Image from "next/image";
+import GradualSpacing from "~/components/magicui/gradual-spacing";
+import type { Product as IProduct } from "@prisma/client";
 
-import type { Product as IProducts } from "@prisma/client";
 import { Button } from "~/components/ui/button";
-import { FormCustomer } from "../forms/form-customer";
-import { DialogDeleteCustomer } from "../dialog-delete-customer";
+import { ImagePlaceholder } from "~/components/image-placeholder";
 import { cn } from "~/lib/utils";
-import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "~/components/ui/badge";
 import { useRouter } from "next/navigation";
+import { PencilIcon, Trash2 } from "lucide-react";
+import { DialogDeletion } from "../dialog-deletion";
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "~/components/ui/card";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
+type ExtendedIProduct = IProduct & {
+  contact: {
+    name: string;
+  };
+};
 
-export function TableProducts({ products }: { products: IProducts[] }) {
+export function TableProducts({
+  myProducts,
+}: {
+  myProducts: ExtendedIProduct[];
+}) {
+  console.log("myProducts", myProducts);
   const router = useRouter();
   const [deleteId, setDeleteId] = useState("");
 
   return (
     <>
-      <Table
-        className={cn("", {
-          hidden: products.length === 0,
-        })}
-      >
-        <TableHeader>
-          <TableRow>
-            <TableHead>NO</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Stock</TableHead>
-            <TableHead className="hidden text-center md:table-cell">
-              Status
-            </TableHead>
-            <TableHead>
-              <span className="sr-only">Actions</span>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {products.map((product, idx) => (
-            <TableRow key={product.id}>
-              <TableCell className="font-medium">{idx + 1}</TableCell>
-              <TableCell className="font-medium">{product.name}</TableCell>
-              <TableCell className="font-medium">{product.name}</TableCell>
-              <TableCell className="font-medium">{product.price}</TableCell>
-              <TableCell className="font-medium">{product.stock}</TableCell>
-              <TableCell className="text-center">
-                <Badge
-                  variant="outline"
-                  className={cn("bg-red-100 text-red-500", {
-                    "bg-green-200 text-green-900": product.status,
-                  })}
-                >
-                  {product.status ? "Active" : "Inactive"}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button aria-haspopup="true" size="icon" variant="ghost">
-                      <MoreHorizontal className="h-4 w-4" />
-                      <span className="sr-only">Toggle menu</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        router.push(
-                          `?form_products=true&type=edit&id=${product.id}`,
-                        )
-                      }
-                    >
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setDeleteId(product.id.toString())}
-                    >
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {myProducts.map((product) => (
+          <Card key={product.id} className="flex h-[300px] w-[300px] flex-col">
+            <CardHeader className="p-0">
+              {!product?.imageUrl ? (
+                <ImagePlaceholder name={product.name} />
+              ) : (
+                <Image
+                  src={product.imageUrl ?? ""}
+                  alt={product.name}
+                  className="h-auto rounded-lg"
+                  width={100}
+                  height={100}
+                />
+              )}
+            </CardHeader>
+            <CardContent className="flex-grow p-4">
+              <div className="mb-2 flex items-start justify-between">
+                <GradualSpacing
+                  className="font-display text-center text-xl font-bold tracking-[-0.1em]  text-black dark:text-white md:text-3xl md:leading-[1rem]"
+                  text={product.name}
+                />
+                {product.badge && (
+                  <Badge variant="secondary" className="ml-2">
+                    {product.badge}
+                  </Badge>
+                )}
+              </div>
+              <p className="mb-2 text-sm text-muted-foreground">
+                {product.description}
+              </p>
+              <p className="mb-2 text-sm text-muted-foreground">
+                supplier: {product.contact?.name}
+              </p>
+              <p className="text-lg font-bold">${product.price.toFixed(2)}</p>
+            </CardContent>
+            <CardFooter className="flex gap-1 p-4 pt-0">
+              <div
+                className={cn(
+                  "flex h-full flex-grow items-center justify-center rounded-sm bg-green-200 px-2 text-green-600",
+                  {
+                    "bg-red-200 text-red-600": !product.status,
+                  },
+                )}
+              >
+                {product.status ? "Active" : "Inactive"}
+              </div>
+              <Button onClick={() => {}}>
+                <PencilIcon />
+              </Button>
+              <Button onClick={() => setDeleteId(product.id.toString())}>
+                <Trash2 />
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
 
-      <DialogDeleteCustomer
+      <DialogDeletion
         deleteId={deleteId}
         setDeleteId={setDeleteId}
         refresh={() => router.refresh()}
+        title="product"
       />
     </>
   );
