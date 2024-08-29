@@ -38,7 +38,7 @@ const FormSchema = z.object({
 export default function Login() {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
-  const { data } = useSession() as any;
+  const session = useSession() as any;
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -64,13 +64,13 @@ export default function Login() {
     toast.error(response?.error);
     setIsPending(false);
   }
-  console.log("data", data);
 
   useEffect(() => {
-    if (data?.email !== "") {
+    if (session.status === "authenticated") {
+      toast.success("Redirecting...");
       router.push("/dashboard");
     }
-  }, [data]);
+  }, [session]);
 
   return (
     <div className="flex h-screen w-full justify-between">

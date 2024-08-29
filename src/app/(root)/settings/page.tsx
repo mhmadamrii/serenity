@@ -1,8 +1,12 @@
 "use client";
+
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Separator } from "~/components/ui/separator";
+
 import {
   Card,
   CardContent,
@@ -11,11 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Separator } from "~/components/ui/separator";
+import { useSession } from "next-auth/react";
 
 export default function Settings() {
   const [username, setUsername] = useState("johndoe");
+  const session = useSession();
+  console.log("session", session);
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);

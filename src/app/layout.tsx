@@ -8,7 +8,7 @@ import SessionWrapper from "./_components/session-wrapper";
 
 export const metadata = {
   title: "Serentiy | Minimalist Software Accounting App",
-  description: "A simple and minimalist Saas like for accounting management",
+  description: "A simple and minimalist Saas like, for accounting management",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
