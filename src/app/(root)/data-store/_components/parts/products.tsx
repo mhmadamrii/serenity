@@ -7,7 +7,7 @@ import { TableProducts } from "../tables/table-products";
 
 export async function Products() {
   const session = (await getServerSession(authOptions)) as any;
-  await new Promise((res, rej) => setTimeout(res, 1000));
+  await new Promise((res, rej) => setTimeout(res, 500));
   const myProducts = await api.product.getProducts({
     userId: session?.id,
   });

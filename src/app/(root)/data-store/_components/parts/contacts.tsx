@@ -19,7 +19,7 @@ interface IProps {
 }
 
 export async function Contacts({ currentTab = "contacts" }: IProps) {
-  await new Promise((res, rej) => setTimeout(res, 1000));
+  await new Promise((res, rej) => setTimeout(res, 500));
   const session = (await getServerSession(authOptions)) as any;
   const contacts = await api.contact.getContacts({
     userId: session.id,

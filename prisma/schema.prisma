@@ -21,8 +21,7 @@ model User {
     Contact  Contact[]
     products Product[]
 
-    Profile   Profile?
-    profileId Int?     @unique
+    Profile Profile?
 }
 
 model Contact {
@@ -44,9 +43,10 @@ model Contact {
 
 model Profile {
     id            Int              @id @default(autoincrement())
-    user          User             @relation(fields: [userId], references: [profileId])
-    userId        Int              @unique
+    user          User             @relation(fields: [userId], references: [id])
+    userId        String           @unique
     name          String
+    address       String?
     subscribePlan SubscriptionPlan @default(FREE)
 }
 

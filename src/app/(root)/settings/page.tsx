@@ -1,11 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import type { Profile } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { Label } from "~/components/ui/label";
+import { api } from "~/trpc/react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Separator } from "~/components/ui/separator";
+import { ChevronLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import {
   Card,
@@ -15,25 +24,81 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { useSession } from "next-auth/react";
+
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "~/components/ui/form";
+
+const FormSchema = z.object({
+  username: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  email: z.string().min(2, {
+    message: "Email must be at least 2 characters.",
+  }),
+  address: z.string().min(2, {
+    message: "Address must be at least 2 characters.",
+  }),
+});
 
 export default function Settings() {
-  const [username, setUsername] = useState("johndoe");
-  const session = useSession();
-  console.log("session", session);
+  const session = useSession() as any;
+  const router = useRouter();
 
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
-  };
+  const { data: myProfile } = api.setting.getAcccountDataById.useQuery({
+    id: session?.data?.id,
+  }) as unknown as any;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here you would typically send the updated username to your backend
-    console.log("Username updated:", username);
-  };
+  const { mutate, isPending } =
+    api.setting.editAccountAndCreateProfile.useMutation({
+      onSuccess: () => toast.success("Successfully edit profile"),
+      onError: () => toast.error("Successfully edit profile"),
+    });
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      username: "",
+      email: session?.data?.email,
+    },
+  });
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    const rebuildBody = {
+      email: session?.data?.email,
+      name: data.username,
+      address: data.address,
+      userId: session?.data?.id,
+    } as any;
+
+    mutate(rebuildBody);
+  }
+
+  useEffect(() => {
+    if (myProfile !== null) {
+      form.setValue("email", session?.data?.email);
+      form.setValue("username", myProfile?.name);
+      form.setValue("address", myProfile?.address);
+    }
+  }, [session, myProfile]);
 
   return (
     <div className="container mx-auto py-10">
+      <div className="mb-5">
+        <Button
+          onClick={() => router.back()}
+          className="flex items-center gap-2"
+        >
+          <ChevronLeft />
+          Back
+        </Button>
+      </div>
       <h1 className="mb-6 text-3xl font-bold">Account Settings</h1>
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
@@ -42,43 +107,94 @@ export default function Settings() {
             <CardDescription>Update your account details here</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <Avatar className="h-20 w-20">
-                    <AvatarImage
-                      src="/placeholder.svg?height=80&width=80"
-                      alt="~johndoe"
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Avatar className="h-20 w-20">
+                      <AvatarImage
+                        src="/placeholder.svg?height=80&width=80"
+                        alt="~johndoe"
+                      />
+                      <AvatarFallback>JD</AvatarFallback>
+                    </Avatar>
+                    <Button variant="outline" type="button">
+                      Change Avatar
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    <FormField
+                      control={form.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input
+                              disabled={isPending}
+                              placeholder="John Doe"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            This is your public display name.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  <Button variant="outline">Change Avatar</Button>
+                  </div>
+                  <div className="space-y-2">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              disabled={isPending}
+                              placeholder="john@gmail.com"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            This is your email account.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <FormField
+                      control={form.control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Address</FormLabel>
+                          <FormControl>
+                            <Input
+                              disabled={isPending}
+                              placeholder="Oxford"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            This is your email account.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    value={username}
-                    onChange={handleUsernameChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value="john.doe~example.com"
-                    disabled
-                  />
-                </div>
-              </div>
-            </form>
+                <Button type="submit">Save Changes</Button>
+              </form>
+            </Form>
           </CardContent>
-          <CardFooter>
-            <Button type="submit" onClick={handleSubmit}>
-              Save Changes
-            </Button>
-          </CardFooter>
+          <CardFooter></CardFooter>
         </Card>
         <Card>
           <CardHeader>
