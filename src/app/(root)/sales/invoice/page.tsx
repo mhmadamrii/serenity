@@ -1,10 +1,26 @@
-export default function SalesInvoice() {
+import { Suspense } from "react";
+import { ContactSkeleton } from "~/components/skeletons/contact-skeleton";
+import { SalesHeader } from "../_components/sales-header";
+import { Invoice } from "../_components/parts/invoice";
+import { FormSalesInvoice } from "../_components/forms/form-sales-invoice";
+
+export default async function SalesInvoice({
+  searchParams,
+}: {
+  searchParams: {
+    form: string;
+    type_form: string;
+  };
+}) {
   return (
-    <div>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis unde
-      impedit mollitia, iusto nam, debitis voluptatem ad illum totam architecto
-      cumque non repellat? Placeat porro inventore odio ipsa saepe libero.
-      <p>hello</p>
-    </div>
+    <>
+      {searchParams.form === "invoices" ? (
+        <FormSalesInvoice />
+      ) : (
+        <Suspense fallback={<ContactSkeleton />}>
+          <Invoice />
+        </Suspense>
+      )}
+    </>
   );
 }

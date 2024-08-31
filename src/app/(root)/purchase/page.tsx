@@ -1,7 +1,8 @@
 export default function Purchase() {
   return (
     <main>
-      <p>some purchase</p>
+      {/* <MagicCardDemo /> */}
+      <p>hello</p>
     </main>
   );
 }

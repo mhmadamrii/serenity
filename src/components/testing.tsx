@@ -1,15 +1,26 @@
-import { Slash } from "lucide-react";
+import { useTheme } from "next-themes";
+import { MagicCard } from "~/components/magicui/magic-card";
 
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "~/components/ui/breadcrumb";
-import { ContactSkeleton } from "./skeletons/contact-skeleton";
-
-export function BreadcrumbWithCustomSeparator() {
-  return <ContactSkeleton />;
+export function MagicCardDemo() {
+  const { theme } = useTheme();
+  return (
+    <div
+      className={
+        "flex h-[500px] w-full flex-col gap-4 lg:h-[250px] lg:flex-row"
+      }
+    >
+      <MagicCard
+        className="cursor-pointer flex-col items-center justify-center whitespace-nowrap text-4xl shadow-2xl"
+        gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
+      >
+        Magic
+      </MagicCard>
+      <MagicCard
+        className="cursor-pointer flex-col items-center justify-center whitespace-nowrap text-4xl shadow-2xl"
+        gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
+      >
+        Card
+      </MagicCard>
+    </div>
+  );
 }

@@ -51,6 +51,19 @@ const routes = [
 export function Navigation() {
   const router = useRouter();
   const pathname = usePathname();
+  console.log("pathname", pathname);
+
+  const getCurrentPlaceholder = () => {
+    switch (pathname) {
+      case "/data-store/products":
+        return "Products";
+      case "/data-store/contacts":
+        return "Contacts";
+
+      default:
+        return "Data";
+    }
+  };
 
   return (
     <header
@@ -137,7 +150,7 @@ export function Navigation() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search transactions..."
+              placeholder={`Search ${getCurrentPlaceholder()} . . `}
               className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
             />
           </div>
