@@ -1,5 +1,6 @@
 "use client";
 
+import type { Contact, Product } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { SalesHeader } from "../sales-header";
@@ -14,7 +15,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Calendar } from "~/components/ui/calendar";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
+import { CalendarIcon, CopyPlus, Trash2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 import {
   Select,
@@ -27,7 +30,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -50,21 +52,69 @@ const FormSchema = z.object({
   invoice_date: z.date({
     required_error: "A date of birth is required.",
   }),
-  description: z.string(),
+  description: z.string().min(2, {
+    message: "Description transaction be at least 2 characters",
+  }),
+  tax: z.number().min(1, {
+    message: "Tax must be at least 1",
+  }),
+  qty: z.number().min(1, {
+    message: "Quantity must be at least 1",
+  }),
 });
 
-export function FormSalesInvoice() {
+interface IProps {
+  customers: Contact[];
+  products: Product[];
+}
+
+export function FormSalesInvoice({ customers, products }: IProps) {
   const router = useRouter();
+  const [totalLineItems, setTotalLineItems] = useState([
+    {
+      product: "",
+      qty: 0,
+      id: 1,
+      price: 0,
+    },
+  ]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       invoice_number: "",
       customer_name: "",
+      description: "",
+      tax: 0,
+      qty: 0,
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {}
+  const handleAddLineItem = (): void => {
+    setTotalLineItems([
+      ...totalLineItems,
+      {
+        price: 1000,
+        product: "testing",
+        qty: 0,
+        id: totalLineItems.length + 1,
+      },
+    ]);
+  };
+
+  const handleDeleteLineItems = (id: number): void => {
+    const filteredTotalLineItems = totalLineItems.filter(
+      (item) => item.id !== id,
+    );
+    setTotalLineItems(filteredTotalLineItems);
+  };
+  console.log("total line items", totalLineItems);
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    const parsedCustomer = JSON.parse(data.customer_name);
+
+    console.log("data form", parsedCustomer);
+  }
 
   return (
     <>
@@ -91,41 +141,49 @@ export function FormSalesInvoice() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="relative z-50 w-full p-4"
+          className="relative z-30 w-full p-4"
         >
           <section className="flex w-full flex-row justify-between gap-3 ">
             <section className="flex h-full w-full flex-col justify-between gap-2">
-              <FormField
-                control={form.control}
-                name="customer_name"
-                render={({ field }) => (
-                  <FormItem className="w-full ">
-                    <FormLabel>Customer Name</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select recorded customer" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="m@example.com">
-                          m@example.com
-                        </SelectItem>
-                        <SelectItem value="m@google.com">
-                          m@google.com
-                        </SelectItem>
-                        <SelectItem value="m@support.com">
-                          m@support.com
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex items-start gap-2">
+                <Avatar className="h-[80px] w-[80px]">
+                  <AvatarImage
+                    src="https://github.com/shadcn.png"
+                    alt="@shadcn"
+                  />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <FormField
+                  control={form.control}
+                  name="customer_name"
+                  render={({ field }) => (
+                    <FormItem className="w-full ">
+                      <FormLabel>Customer Name</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select recorded customer" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {customers?.map((customer: any) => (
+                            <SelectItem
+                              key={customer.id}
+                              value={JSON.stringify(customer)}
+                            >
+                              {customer.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
                 name="invoice_number"
@@ -145,7 +203,7 @@ export function FormSalesInvoice() {
               />
             </section>
 
-            <section className="flex w-full flex-col gap-2">
+            <section className="flex w-full flex-col gap-4">
               <FormField
                 control={form.control}
                 name="invoice_date"
@@ -187,18 +245,15 @@ export function FormSalesInvoice() {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
-                name="description"
+                name="tax"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bio</FormLabel>
+                  <FormItem className="w-full">
+                    <FormLabel>Tax</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Description"
-                        className=""
-                        {...field}
-                      />
+                      <Input placeholder="0.0" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -207,7 +262,7 @@ export function FormSalesInvoice() {
             </section>
           </section>
 
-          <section className="flex w-full items-center justify-between gap-3">
+          <section className="mt-3 flex w-full items-start justify-between gap-3">
             <FormField
               control={form.control}
               name="invoice_number"
@@ -217,9 +272,6 @@ export function FormSalesInvoice() {
                   <FormControl>
                     <Input placeholder="0.0" {...field} className="w-full" />
                   </FormControl>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -227,20 +279,104 @@ export function FormSalesInvoice() {
 
             <FormField
               control={form.control}
-              name="customer_name"
+              name="description"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Tax</FormLabel>
+                  <FormLabel>Transaction Description</FormLabel>
                   <FormControl>
-                    <Input placeholder="0.0" {...field} />
+                    <Textarea
+                      placeholder="Description"
+                      className=""
+                      {...field}
+                    />
                   </FormControl>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+          </section>
+
+          <section className="mt-5 flex flex-col gap-2 rounded-lg border p-3 backdrop-blur-lg">
+            <div className="flex w-full justify-end">
+              <Button
+                className="flex gap-2"
+                type="button"
+                onClick={handleAddLineItem}
+              >
+                <CopyPlus />
+                Add Item
+              </Button>
+            </div>
+            {/* product name, qty, price, total (read-only) */}
+            {totalLineItems.map((item, idx) => (
+              <div key={idx} className="flex items-center gap-2 py-4">
+                <FormField
+                  control={form.control}
+                  name="customer_name"
+                  render={({ field }) => (
+                    <FormItem className="w-full ">
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select product" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {products?.map((product) => (
+                            <SelectItem
+                              key={product.id}
+                              value={JSON.stringify(product)}
+                            >
+                              {product.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="qty"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormControl>
+                        <Input placeholder="Quantity" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="qty"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormControl>
+                        <Input placeholder="Price" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex items-center">
+                  <h1 className="text-lg">400</h1>
+                </div>
+                <div
+                  className="rounded-full bg-red-200 p-2"
+                  onClick={() => handleDeleteLineItems(item.id)}
+                >
+                  <Trash2 color="red" size={20} />
+                </div>
+              </div>
+            ))}
           </section>
 
           <section className="mt-[90px] flex justify-end">
@@ -252,7 +388,12 @@ export function FormSalesInvoice() {
               </div>
 
               <div className="flex w-1/2 gap-2 pb-9">
-                <Button type="button" variant="outline" className="mt-4 w-1/2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-4 w-1/2"
+                  onClick={() => form.reset()}
+                >
                   Reset
                 </Button>
                 <Button type="submit" className="mt-4 w-1/2">

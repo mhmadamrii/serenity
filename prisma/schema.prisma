@@ -57,6 +57,7 @@ model Invoice {
     description   String?
     userId        String
     total         Float
+    tax           Float
     user          User     @relation(fields: [userId], references: [id])
     status        Status   @default(UNPAID)
     createdAt     DateTime @default(now())

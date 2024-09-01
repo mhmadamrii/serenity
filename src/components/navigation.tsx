@@ -68,7 +68,7 @@ export function Navigation() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-10 flex h-16 items-center gap-4 border-b px-4 backdrop-blur-sm md:px-6",
+        "sticky top-0 z-50 flex h-16 items-center gap-4 border-b px-4 backdrop-blur-sm md:px-6",
         {
           hidden: pathname === "/settings",
         },

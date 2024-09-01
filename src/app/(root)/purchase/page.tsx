@@ -1,8 +1,9 @@
+import { MagicCardDemo } from "~/components/testing";
+
 export default function Purchase() {
   return (
     <main>
-      {/* <MagicCardDemo /> */}
-      <p>hello</p>
+      <MagicCardDemo />
     </main>
   );
 }
