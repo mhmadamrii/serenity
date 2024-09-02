@@ -46,6 +46,7 @@ export function TableContacts({
   contacts: ICustomers[];
   currentTab: string;
 }) {
+  console.log("contacts", contacts);
   const router = useRouter();
   const [deleteId, setDeleteId] = useState("");
 
@@ -61,6 +62,7 @@ export function TableContacts({
             <TableHead>Image</TableHead>
             <TableHead>Contact Name</TableHead>
             <TableHead>Contact Email</TableHead>
+            <TableHead>Address</TableHead>
             <TableHead className="hidden text-center md:table-cell">
               Status
             </TableHead>
@@ -85,6 +87,7 @@ export function TableContacts({
               </TableCell>
               <TableCell className="font-medium">{customer.name}</TableCell>
               <TableCell className="font-medium">{customer.email}</TableCell>
+              <TableCell className="font-medium">{customer.address}</TableCell>
               <TableCell className="text-center">
                 <Badge
                   variant="outline"

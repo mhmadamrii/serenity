@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { ContactSkeleton } from "~/components/skeletons/contact-skeleton";
-import { SalesHeader } from "../_components/sales-header";
 import { Invoice } from "../_components/parts/invoice";
 import { FormSalesInvoice } from "../_components/forms/form-sales-invoice";
 import { api } from "~/trpc/server";
@@ -28,7 +27,11 @@ export default async function SalesInvoice({
   return (
     <>
       {searchParams.form === "invoices" ? (
-        <FormSalesInvoice customers={customers} products={products} />
+        <FormSalesInvoice
+          customers={customers}
+          products={products}
+          currentUserId={session.id}
+        />
       ) : (
         <Suspense fallback={<ContactSkeleton />}>
           <Invoice />

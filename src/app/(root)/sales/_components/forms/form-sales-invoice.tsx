@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Calendar } from "~/components/ui/calendar";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CalendarIcon, CopyPlus, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
@@ -41,6 +41,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
+import { api } from "~/trpc/react";
 
 const FormSchema = z.object({
   invoice_number: z.string().min(2, {
@@ -55,10 +56,13 @@ const FormSchema = z.object({
   description: z.string().min(2, {
     message: "Description transaction be at least 2 characters",
   }),
-  tax: z.number().min(1, {
+  tax: z.coerce.number().min(1, {
     message: "Tax must be at least 1",
   }),
-  qty: z.number().min(1, {
+  total: z.coerce.number().min(1, {
+    message: "Total must be at least 1",
+  }),
+  qty: z.coerce.number().min(1, {
     message: "Quantity must be at least 1",
   }),
 });
@@ -66,15 +70,20 @@ const FormSchema = z.object({
 interface IProps {
   customers: Contact[];
   products: Product[];
+  currentUserId: string;
 }
 
-export function FormSalesInvoice({ customers, products }: IProps) {
+export function FormSalesInvoice({
+  customers,
+  products,
+  currentUserId,
+}: IProps) {
   const router = useRouter();
   const [totalLineItems, setTotalLineItems] = useState([
     {
       product: "",
-      qty: 0,
-      id: 1,
+      qty: 300,
+      id: 0,
       price: 0,
     },
   ]);
@@ -87,7 +96,13 @@ export function FormSalesInvoice({ customers, products }: IProps) {
       description: "",
       tax: 0,
       qty: 0,
+      total: 300,
     },
+  });
+
+  const { mutate } = api.invoice.createInvoice.useMutation({
+    onSuccess: (res) => console.log("response success", res),
+    onError: (err) => console.log("response error", err),
   });
 
   const handleAddLineItem = (): void => {
@@ -108,13 +123,32 @@ export function FormSalesInvoice({ customers, products }: IProps) {
     );
     setTotalLineItems(filteredTotalLineItems);
   };
-  console.log("total line items", totalLineItems);
+
+  const getAllTotalLineItems = (): number => {
+    const result = useMemo(() => {
+      return totalLineItems.reduce((n, { price }) => n + price, 0);
+    }, [totalLineItems]);
+    form.setValue("total", result);
+    return result;
+  };
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const parsedCustomer = JSON.parse(data.customer_name);
+    const rebuildData = {
+      customerId: parsedCustomer.id,
+      invoiceNumber: data.invoice_number,
+      description: data.description,
+      tax: data.tax,
+      total: data.total,
+      status: "UNPAID" as "PAID" | "UNPAID",
+      userId: currentUserId,
+    };
+    console.log("rebuild body", rebuildData);
 
-    console.log("data form", parsedCustomer);
+    // mutate(rebuildData);
   }
+
+  console.log("form errors", form.formState.errors);
 
   return (
     <>
@@ -307,7 +341,6 @@ export function FormSalesInvoice({ customers, products }: IProps) {
                 Add Item
               </Button>
             </div>
-            {/* product name, qty, price, total (read-only) */}
             {totalLineItems.map((item, idx) => (
               <div key={idx} className="flex items-center gap-2 py-4">
                 <FormField
@@ -384,7 +417,11 @@ export function FormSalesInvoice({ customers, products }: IProps) {
               <Separator className="w-full" />
               <div className="flex items-center gap-3 pt-9">
                 <Label>SubTotal</Label>
-                <Input value={500} readOnly className="w-[400px]" />
+                <Input
+                  value={getAllTotalLineItems()}
+                  readOnly
+                  className="w-[400px]"
+                />
               </div>
 
               <div className="flex w-1/2 gap-2 pb-9">
