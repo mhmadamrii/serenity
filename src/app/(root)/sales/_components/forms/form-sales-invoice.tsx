@@ -2,6 +2,7 @@
 
 import type { Contact, Product } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { z } from "zod";
@@ -16,7 +17,7 @@ import { useForm } from "react-hook-form";
 import { Calendar } from "~/components/ui/calendar";
 import { format } from "date-fns";
 import { useMemo, useState } from "react";
-import { CalendarIcon, CopyPlus, Trash2 } from "lucide-react";
+import { CalendarIcon, CopyPlus, Trash2, Layers3 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 import {
@@ -55,6 +56,9 @@ const FormSchema = z.object({
   description: z.string().min(2, {
     message: "Description transaction be at least 2 characters",
   }),
+  status: z.string().min(2, {
+    message: "Status transaction be at least 2 characters",
+  }),
   tax: z.coerce.number().min(1, {
     message: "Tax must be at least 1",
   }),
@@ -84,6 +88,7 @@ export function FormSalesInvoice({
       qty: 300,
       id: 0,
       price: 0,
+      total: 0,
     },
   ]);
 
@@ -96,11 +101,12 @@ export function FormSalesInvoice({
       tax: 0,
       qty: 0,
       total: 300,
+      status: "",
     },
   });
 
-  const { mutate } = api.invoice.createInvoice.useMutation({
-    onSuccess: (res) => console.log("response success", res),
+  const { mutate, isPending } = api.invoice.createInvoice.useMutation({
+    onSuccess: (res) => toast.success("Successfully create new invoice"),
     onError: (err) => console.log("response error", err),
   });
 
@@ -112,9 +118,11 @@ export function FormSalesInvoice({
         product: "testing",
         qty: 0,
         id: totalLineItems.length + 1,
+        total: 0,
       },
     ]);
   };
+  console.log("form", form.formState.errors);
 
   const handleDeleteLineItems = (id: number): void => {
     const filteredTotalLineItems = totalLineItems.filter(
@@ -134,17 +142,31 @@ export function FormSalesInvoice({
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const parsedCustomer = JSON.parse(data.customer_name);
     const rebuildData = {
-      customerId: parsedCustomer.id,
+      customerId: parsedCustomer.id.toString(),
       invoiceNumber: data.invoice_number,
       description: data.description,
       tax: data.tax,
-      total: data.total,
-      status: "UNPAID" as "PAID" | "UNPAID",
+      total: 200,
+      status: data.status as "PAID" | "UNPAID",
       userId: currentUserId,
+      invoiceLineItems: [
+        {
+          productId: 1,
+          price: 300,
+          qty: 40,
+          total: 400,
+        },
+        {
+          productId: 1,
+          price: 200,
+          qty: 3,
+          total: 200,
+        },
+      ],
     };
     console.log("rebuild body", rebuildData);
 
-    // mutate(rebuildData);
+    mutate(rebuildData);
   }
 
   return (
@@ -203,6 +225,7 @@ export function FormSalesInvoice({
                     <FormLabel>Invoice Number</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={isPending}
                         placeholder="INV-001"
                         {...field}
                         className="w-full"
@@ -264,7 +287,11 @@ export function FormSalesInvoice({
                   <FormItem className="w-full">
                     <FormLabel>Tax</FormLabel>
                     <FormControl>
-                      <Input placeholder="0.0" {...field} />
+                      <Input
+                        disabled={isPending}
+                        placeholder="0.0"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -276,13 +303,24 @@ export function FormSalesInvoice({
           <section className="mt-3 flex w-full items-start justify-between gap-3">
             <FormField
               control={form.control}
-              name="invoice_number"
+              name="status"
               render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Subtotal</FormLabel>
-                  <FormControl>
-                    <Input placeholder="0.0" {...field} className="w-full" />
-                  </FormControl>
+                <FormItem className="w-full ">
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select recorded customer" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="UNPAID">Unpaid</SelectItem>
+                      <SelectItem value="PAID">Paid</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -379,6 +417,7 @@ export function FormSalesInvoice({
                       </FormLabel>
                       <FormControl>
                         <Input
+                          disabled={isPending}
                           className="text-right"
                           placeholder="Quantity"
                           {...field}
@@ -403,6 +442,7 @@ export function FormSalesInvoice({
                       </FormLabel>
                       <FormControl>
                         <Input
+                          disabled={isPending}
                           className="text-right"
                           placeholder="Price"
                           {...field}
@@ -440,6 +480,22 @@ export function FormSalesInvoice({
                 </div>
               </div>
             ))}
+            <div
+              className={cn(
+                "mb-5 flex w-full flex-col items-center justify-center",
+                {
+                  hidden: totalLineItems.length >= 1,
+                },
+              )}
+            >
+              <Layers3 size={50} />
+              <h1 className="text-lg font-bold text-gray-400">
+                Add Multiple Line Items
+              </h1>
+              <p className="text-base">
+                One invoice could be contains more than one line items
+              </p>
+            </div>
           </section>
 
           <section className="mt-[90px] flex justify-end">
@@ -448,6 +504,7 @@ export function FormSalesInvoice({
               <div className="flex items-center gap-3 pt-9">
                 <Label>SubTotal</Label>
                 <Input
+                  disabled={isPending}
                   value={getAllTotalLineItems()}
                   readOnly
                   className="w-[400px]"

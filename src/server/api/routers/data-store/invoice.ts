@@ -40,6 +40,7 @@ export const invoiceRouter = createTRPCRouter({
         total: z.number(),
         tax: z.number(),
         status: z.enum(["PAID", "UNPAID"]).optional().default("UNPAID"),
+        invoiceLineItems: z.any(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -54,20 +55,7 @@ export const invoiceRouter = createTRPCRouter({
             total: input.total,
             status: input.status,
             invoiceLineItems: {
-              create: [
-                {
-                  productId: 1,
-                  price: 300,
-                  qty: 40,
-                  total: 400,
-                },
-                {
-                  productId: 1,
-                  price: 200,
-                  qty: 3,
-                  total: 200,
-                },
-              ],
+              create: input.invoiceLineItems,
             },
           },
         });
