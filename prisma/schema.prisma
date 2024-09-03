@@ -16,12 +16,12 @@ model User {
     email    String @unique
     password String
 
-    invoices Invoice[]
-    Purchase Purchase[]
-    Contact  Contact[]
-    products Product[]
+    invoices  Invoice[]
+    purchases Purchase[]
+    contacts  Contact[]
+    products  Product[]
 
-    Profile Profile?
+    profile Profile?
 }
 
 model Contact {
@@ -51,17 +51,28 @@ model Profile {
 }
 
 model Invoice {
-    id            Int      @id @default(autoincrement())
-    invoiceNumber String
-    customerId    String
-    description   String?
-    userId        String
-    total         Float
-    tax           Float
-    user          User     @relation(fields: [userId], references: [id])
-    status        Status   @default(UNPAID)
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
+    id               Int                @id @default(autoincrement())
+    invoiceNumber    String
+    customerId       String
+    description      String?
+    userId           String
+    total            Float
+    tax              Float
+    user             User               @relation(fields: [userId], references: [id])
+    status           Status             @default(UNPAID)
+    invoiceLineItems InvoiceLineItems[]
+    createdAt        DateTime           @default(now())
+    updatedAt        DateTime           @updatedAt
+}
+
+model InvoiceLineItems {
+    id        Int      @id @default(autoincrement())
+    productId Int
+    qty       Int
+    price     Int
+    total     Int
+    Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+    invoiceId Int?
 }
 
 model Purchase {

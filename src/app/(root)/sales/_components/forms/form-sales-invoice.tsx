@@ -3,14 +3,14 @@
 import type { Contact, Product } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
-import { SalesHeader } from "../sales-header";
 import { Input } from "~/components/ui/input";
 import { z } from "zod";
 import { cn } from "~/lib/utils";
 import { Textarea } from "~/components/ui/textarea";
+import { api } from "~/trpc/react";
+import { FormInvoiceWrapper } from "../form-invoice-wrapper";
 import { Label } from "~/components/ui/label";
 import { Separator } from "~/components/ui/separator";
-import { BgParticlesSales } from "../bg-particles-sales";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Calendar } from "~/components/ui/calendar";
@@ -41,7 +41,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { api } from "~/trpc/react";
 
 const FormSchema = z.object({
   invoice_number: z.string().min(2, {
@@ -148,30 +147,8 @@ export function FormSalesInvoice({
     // mutate(rebuildData);
   }
 
-  console.log("form errors", form.formState.errors);
-
   return (
-    <>
-      <BgParticlesSales />
-      <SalesHeader
-        headerName="Create Invoice"
-        type="create"
-        breadcrumbItems={[
-          {
-            label: "Dashboard",
-            path: "/dashboard",
-          },
-          {
-            label: "Sales",
-            path: "/sales",
-          },
-          {
-            label: "Invoices",
-            path: "/sales/invoice",
-          },
-        ]}
-      />
-
+    <FormInvoiceWrapper>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -342,12 +319,27 @@ export function FormSalesInvoice({
               </Button>
             </div>
             {totalLineItems.map((item, idx) => (
-              <div key={idx} className="flex items-center gap-2 py-4">
+              <div
+                key={idx}
+                className={cn(
+                  "flex items-center gap-2 rounded-lg border px-2 py-4",
+                  {
+                    "bg-gray-900": idx % 2 === 0,
+                  },
+                )}
+              >
                 <FormField
                   control={form.control}
                   name="customer_name"
                   render={({ field }) => (
-                    <FormItem className="w-full ">
+                    <FormItem className="w-full">
+                      <FormLabel
+                        className={cn("block", {
+                          hidden: idx !== 0,
+                        })}
+                      >
+                        Items
+                      </FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -377,9 +369,20 @@ export function FormSalesInvoice({
                   control={form.control}
                   name="qty"
                   render={({ field }) => (
-                    <FormItem className="w-full">
+                    <FormItem className="w-1/2">
+                      <FormLabel
+                        className={cn("block text-right", {
+                          hidden: idx !== 0,
+                        })}
+                      >
+                        Quantity
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="Quantity" {...field} />
+                        <Input
+                          className="text-right"
+                          placeholder="Quantity"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -390,23 +393,50 @@ export function FormSalesInvoice({
                   control={form.control}
                   name="qty"
                   render={({ field }) => (
-                    <FormItem className="w-full">
+                    <FormItem className="w-1/2">
+                      <FormLabel
+                        className={cn("block text-right", {
+                          hidden: idx !== 0,
+                        })}
+                      >
+                        Price
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="Price" {...field} />
+                        <Input
+                          className="text-right"
+                          placeholder="Price"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <div className="flex items-center">
-                  <h1 className="text-lg">400</h1>
-                </div>
+                <FormField
+                  control={form.control}
+                  name="qty"
+                  render={({ field }) => (
+                    <FormItem className="w-1/2">
+                      <FormLabel
+                        className={cn("block text-right", {
+                          hidden: idx !== 0,
+                        })}
+                      >
+                        Total
+                      </FormLabel>
+                      <FormControl>
+                        <h1 className="text-right">Hello world</h1>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div
-                  className="rounded-full bg-red-200 p-2"
+                  className="ml-4 rounded-full bg-red-200 p-2"
                   onClick={() => handleDeleteLineItems(item.id)}
                 >
-                  <Trash2 color="red" size={20} />
+                  <Trash2 color="red" size={15} />
                 </div>
               </div>
             ))}
@@ -442,6 +472,6 @@ export function FormSalesInvoice({
           </section>
         </form>
       </Form>
-    </>
+    </FormInvoiceWrapper>
   );
 }

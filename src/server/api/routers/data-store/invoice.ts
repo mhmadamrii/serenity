@@ -53,6 +53,22 @@ export const invoiceRouter = createTRPCRouter({
             tax: input.tax,
             total: input.total,
             status: input.status,
+            invoiceLineItems: {
+              create: [
+                {
+                  productId: 1,
+                  price: 300,
+                  qty: 40,
+                  total: 400,
+                },
+                {
+                  productId: 1,
+                  price: 200,
+                  qty: 3,
+                  total: 200,
+                },
+              ],
+            },
           },
         });
 
