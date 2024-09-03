@@ -1,7 +1,7 @@
 "use client";
 
-import type { Profile } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { ChangePassword } from "./_components/change-password";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -215,8 +215,12 @@ export default function Settings() {
               <div className="space-y-2">
                 <Label>Account Actions</Label>
                 <div className="flex flex-col space-y-2">
-                  <Button variant="outline">Change Password</Button>
-                  <Button variant="outline" className="text-destructive">
+                  <ChangePassword userId={session?.data?.id} />
+                  <Button
+                    variant="outline"
+                    className="text-destructive"
+                    onClick={() => toast.warning("Under development!")}
+                  >
                     Delete Account
                   </Button>
                 </div>
