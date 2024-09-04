@@ -16,8 +16,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Calendar } from "~/components/ui/calendar";
 import { format } from "date-fns";
+import { FormLineItemsInvoice } from "./form-line-items-invoice";
 import { useMemo, useState } from "react";
-import { CalendarIcon, CopyPlus, Trash2, Layers3 } from "lucide-react";
+import { CalendarIcon, CopyPlus, Layers3 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 import {
@@ -68,6 +69,14 @@ const FormSchema = z.object({
   qty: z.coerce.number().min(1, {
     message: "Quantity must be at least 1",
   }),
+  lineItemsInvoice: z.array(
+    z.object({
+      product_id: z.number(),
+      qty: z.coerce.number(),
+      price: z.coerce.number(),
+      total: z.coerce.number(),
+    }),
+  ),
 });
 
 interface IProps {
@@ -122,7 +131,6 @@ export function FormSalesInvoice({
       },
     ]);
   };
-  console.log("form", form.formState.errors);
 
   const handleDeleteLineItems = (id: number): void => {
     const filteredTotalLineItems = totalLineItems.filter(
@@ -130,6 +138,8 @@ export function FormSalesInvoice({
     );
     setTotalLineItems(filteredTotalLineItems);
   };
+
+  const handleChangeLineItems = () => {};
 
   const getAllTotalLineItems = (): number => {
     const result = useMemo(() => {
@@ -168,6 +178,8 @@ export function FormSalesInvoice({
 
     mutate(rebuildData);
   }
+
+  console.log("form errors", form.formState.errors);
 
   return (
     <FormInvoiceWrapper>
@@ -313,7 +325,7 @@ export function FormSalesInvoice({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select recorded customer" />
+                        <SelectValue placeholder="Select status invoice" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -356,130 +368,13 @@ export function FormSalesInvoice({
                 Add Item
               </Button>
             </div>
-            {totalLineItems.map((item, idx) => (
-              <div
-                key={idx}
-                className={cn(
-                  "flex items-center gap-2 rounded-lg border px-2 py-4",
-                  {
-                    "bg-gray-900": idx % 2 === 0,
-                  },
-                )}
-              >
-                <FormField
-                  control={form.control}
-                  name="customer_name"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel
-                        className={cn("block", {
-                          hidden: idx !== 0,
-                        })}
-                      >
-                        Items
-                      </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select product" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {products?.map((product) => (
-                            <SelectItem
-                              key={product.id}
-                              value={JSON.stringify(product)}
-                            >
-                              {product.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="qty"
-                  render={({ field }) => (
-                    <FormItem className="w-1/2">
-                      <FormLabel
-                        className={cn("block text-right", {
-                          hidden: idx !== 0,
-                        })}
-                      >
-                        Quantity
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={isPending}
-                          className="text-right"
-                          placeholder="Quantity"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="qty"
-                  render={({ field }) => (
-                    <FormItem className="w-1/2">
-                      <FormLabel
-                        className={cn("block text-right", {
-                          hidden: idx !== 0,
-                        })}
-                      >
-                        Price
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={isPending}
-                          className="text-right"
-                          placeholder="Price"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="qty"
-                  render={({ field }) => (
-                    <FormItem className="w-1/2">
-                      <FormLabel
-                        className={cn("block text-right", {
-                          hidden: idx !== 0,
-                        })}
-                      >
-                        Total
-                      </FormLabel>
-                      <FormControl>
-                        <h1 className="text-right">Hello world</h1>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div
-                  className="ml-4 rounded-full bg-red-200 p-2"
-                  onClick={() => handleDeleteLineItems(item.id)}
-                >
-                  <Trash2 color="red" size={15} />
-                </div>
-              </div>
-            ))}
+            <FormLineItemsInvoice
+              totalLineItems={totalLineItems}
+              form={form}
+              isPending={isPending}
+              products={products}
+              handleDeleteLineItems={handleDeleteLineItems}
+            />
             <div
               className={cn(
                 "mb-5 flex w-full flex-col items-center justify-center",
