@@ -63,9 +63,7 @@ const FormSchema = z.object({
   tax: z.coerce.number().min(1, {
     message: "Tax must be at least 1",
   }),
-  subTotal: z.coerce.number().min(1, {
-    message: "Total must be at least 1",
-  }),
+  subTotal: z.coerce.number().optional(),
   // qty: z.coerce.number().min(1, {
   //   message: "Quantity must be at least 1",
   // }),
@@ -114,7 +112,11 @@ export function FormSalesInvoice({
   });
 
   const { mutate, isPending } = api.invoice.createInvoice.useMutation({
-    onSuccess: (res) => toast.success("Successfully create new invoice"),
+    onSuccess: (res) => {
+      toast.success("Successfully create new invoice");
+      setTotalLineItems([]);
+      form.reset();
+    },
     onError: (err) => console.log("response error", err),
   });
 
@@ -146,22 +148,23 @@ export function FormSalesInvoice({
         product_id: JSON.parse(item.product_id).id,
       };
     });
+    const subTotalAllLineItems = lineItemsInvoiceProduct.reduce((acc, curr) => acc + curr.total, 0) // prettier-ignore
 
     const rebuildData = {
       customerId: parsedCustomer.id.toString(),
       invoiceNumber: data.invoice_number,
       description: data.description,
       tax: data.tax,
-      subTotal: 200,
+      total: subTotalAllLineItems, // as subtotal
       status: data.status as "PAID" | "UNPAID",
       userId: currentUserId,
       lineItemsInvoice: lineItemsInvoiceProduct,
     };
-    console.log("rebuild body", rebuildData);
 
-    // mutate(rebuildData);
+    mutate(rebuildData);
   }
 
+  console.log(form.getValues("lineItemsInvoice"));
   return (
     <FormInvoiceWrapper>
       <Form {...form}>
@@ -383,9 +386,8 @@ export function FormSalesInvoice({
                   disabled={isPending}
                   value={
                     form
-                      .watch("lineItemsInvoice")
-                      ?.map((item) => item.price)
-                      ?.reduce((acc, curr) => acc + Number(curr), 0) ?? 0
+                      .getValues("lineItemsInvoice")
+                      ?.reduce((acc, curr) => acc + Number(curr.total), 0) ?? 0
                   }
                   readOnly
                   className="w-[400px]"

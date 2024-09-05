@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { useEffect } from "react";
 
 type TotalLineItemsState = {
   product: string;
@@ -47,9 +48,21 @@ export function FormLineItemsInvoice({
     handleDeleteLineItems(id);
     const filteredTotalLineItems = form
       .getValues("lineItemsInvoice")
-      .filter((item: any, idx: number) => idx !== id - 1);
+      .filter((_: any, idx: number) => idx !== id - 1);
 
     form.setValue("lineItemsInvoice", filteredTotalLineItems);
+  };
+
+  const getLineItemsTotal = (idx: number) => {
+    if (
+      form.getValues("lineItemsInvoice") &&
+      form.getValues("lineItemsInvoice")[idx]
+    ) {
+      const currentLineItems = form.getValues("lineItemsInvoice")[idx];
+      const result = form.getValues("lineItemsInvoice")[idx]?.price * form.getValues("lineItemsInvoice")[idx]?.qty ?? 0; // prettier-ignore
+      currentLineItems.total = result;
+      return result;
+    }
   };
 
   return (
@@ -162,10 +175,11 @@ export function FormLineItemsInvoice({
                 </FormLabel>
                 <FormControl>
                   <Input
-                    disabled={isPending}
+                    disabled
                     className="text-right"
                     placeholder="Quantity"
-                    {...field}
+                    value={`Rp
+                      ${getLineItemsTotal(idx)}`}
                   />
                 </FormControl>
                 <FormMessage />

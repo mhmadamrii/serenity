@@ -71,7 +71,7 @@ model InvoiceLineItems {
     qty       Int
     price     Int
     total     Int
-    Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+    Invoice   Invoice? @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
     invoiceId Int?
 }
 
