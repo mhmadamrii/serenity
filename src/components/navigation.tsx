@@ -51,7 +51,6 @@ const routes = [
 export function Navigation() {
   const router = useRouter();
   const pathname = usePathname();
-  console.log("pathname", pathname);
 
   const getCurrentPlaceholder = () => {
     switch (pathname) {

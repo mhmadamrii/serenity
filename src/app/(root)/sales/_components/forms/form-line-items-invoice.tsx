@@ -43,6 +43,15 @@ export function FormLineItemsInvoice({
   products,
   handleDeleteLineItems,
 }: IProps) {
+  const handleLineItemDeletion = (id: number) => {
+    handleDeleteLineItems(id);
+    const filteredTotalLineItems = form
+      .getValues("lineItemsInvoice")
+      .filter((item: any, idx: number) => idx !== id - 1);
+
+    form.setValue("lineItemsInvoice", filteredTotalLineItems);
+  };
+
   return (
     <>
       {totalLineItems.map((item, idx) => (
@@ -152,7 +161,12 @@ export function FormLineItemsInvoice({
                   Total
                 </FormLabel>
                 <FormControl>
-                  <h1 className="text-right">Hello world</h1>
+                  <Input
+                    disabled={isPending}
+                    className="text-right"
+                    placeholder="Quantity"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -160,7 +174,7 @@ export function FormLineItemsInvoice({
           />
           <div
             className="ml-4 cursor-pointer rounded-full bg-red-200 p-2"
-            onClick={() => handleDeleteLineItems(item.id)}
+            onClick={() => handleLineItemDeletion(item.id)}
           >
             <Trash2 color="red" size={15} />
           </div>

@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 import { Calendar } from "~/components/ui/calendar";
 import { format } from "date-fns";
 import { FormLineItemsInvoice } from "./form-line-items-invoice";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { CalendarIcon, CopyPlus, Layers3 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
@@ -63,15 +63,15 @@ const FormSchema = z.object({
   tax: z.coerce.number().min(1, {
     message: "Tax must be at least 1",
   }),
-  total: z.coerce.number().min(1, {
+  subTotal: z.coerce.number().min(1, {
     message: "Total must be at least 1",
   }),
-  qty: z.coerce.number().min(1, {
-    message: "Quantity must be at least 1",
-  }),
+  // qty: z.coerce.number().min(1, {
+  //   message: "Quantity must be at least 1",
+  // }),
   lineItemsInvoice: z.array(
     z.object({
-      product_id: z.number(),
+      product_id: z.string(),
       qty: z.coerce.number(),
       price: z.coerce.number(),
       total: z.coerce.number(),
@@ -94,7 +94,7 @@ export function FormSalesInvoice({
   const [totalLineItems, setTotalLineItems] = useState([
     {
       product: "",
-      qty: 300,
+      qty: 0,
       id: 0,
       price: 0,
       total: 0,
@@ -108,8 +108,7 @@ export function FormSalesInvoice({
       customer_name: "",
       description: "",
       tax: 0,
-      qty: 0,
-      total: 300,
+      subTotal: 0,
       status: "",
     },
   });
@@ -123,8 +122,8 @@ export function FormSalesInvoice({
     setTotalLineItems([
       ...totalLineItems,
       {
-        price: 1000,
-        product: "testing",
+        price: 0,
+        product: "",
         qty: 0,
         id: totalLineItems.length + 1,
         total: 0,
@@ -139,47 +138,29 @@ export function FormSalesInvoice({
     setTotalLineItems(filteredTotalLineItems);
   };
 
-  const handleChangeLineItems = () => {};
-
-  const getAllTotalLineItems = (): number => {
-    const result = useMemo(() => {
-      return totalLineItems.reduce((n, { price }) => n + price, 0);
-    }, [totalLineItems]);
-    form.setValue("total", result);
-    return result;
-  };
-
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const parsedCustomer = JSON.parse(data.customer_name);
+    const lineItemsInvoiceProduct = data.lineItemsInvoice.map((item) => {
+      return {
+        ...item,
+        product_id: JSON.parse(item.product_id).id,
+      };
+    });
+
     const rebuildData = {
       customerId: parsedCustomer.id.toString(),
       invoiceNumber: data.invoice_number,
       description: data.description,
       tax: data.tax,
-      total: 200,
+      subTotal: 200,
       status: data.status as "PAID" | "UNPAID",
       userId: currentUserId,
-      invoiceLineItems: [
-        {
-          productId: 1,
-          price: 300,
-          qty: 40,
-          total: 400,
-        },
-        {
-          productId: 1,
-          price: 200,
-          qty: 3,
-          total: 200,
-        },
-      ],
+      lineItemsInvoice: lineItemsInvoiceProduct,
     };
     console.log("rebuild body", rebuildData);
 
-    mutate(rebuildData);
+    // mutate(rebuildData);
   }
-
-  console.log("form errors", form.formState.errors);
 
   return (
     <FormInvoiceWrapper>
@@ -400,7 +381,12 @@ export function FormSalesInvoice({
                 <Label>SubTotal</Label>
                 <Input
                   disabled={isPending}
-                  value={getAllTotalLineItems()}
+                  value={
+                    form
+                      .watch("lineItemsInvoice")
+                      ?.map((item) => item.price)
+                      ?.reduce((acc, curr) => acc + Number(curr), 0) ?? 0
+                  }
                   readOnly
                   className="w-[400px]"
                 />
