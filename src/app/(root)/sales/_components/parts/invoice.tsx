@@ -1,4 +1,10 @@
-import { Badge } from "~/components/ui/badge";
+import moment from "moment";
+
+import type {
+  Invoice as TInvoice,
+  Contact as TCustomers,
+} from "@prisma/client";
+import { SalesHeader } from "../sales-header";
 import { MoreHorizontal, FileCheck2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
@@ -30,29 +36,20 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { SalesHeader } from "../sales-header";
 
-const products = [
-  {
-    id: 1, // Add an id property for clarity (optional)
-    name: "Laser Lemonade Machine",
-    status: "Draft",
-    price: 499.99,
-    quantity: 25,
-    createdAt: "2023-07-12 10:42 AM",
-  },
-  {
-    id: 2, // Add an id property for clarity (optional)
-    name: "Hypernova Headphones",
-    status: "Active",
-    price: 129.99,
-    quantity: 100,
-    createdAt: "2023-10-18 03:21 PM",
-  },
-] as const;
+interface IProps {
+  invoices: TInvoice[];
+  customers: TCustomers[];
+}
 
-export async function Invoice() {
+export async function Invoice({ invoices, customers }: IProps) {
   await new Promise((res, rej) => setTimeout(res, 2000));
+  const getCustomerData = (id: string) => {
+    const dataLineItemCustomer = customers.find(
+      (customer) => customer.id === +id,
+    );
+    return dataLineItemCustomer?.name;
+  };
   return (
     <>
       <SalesHeader
@@ -73,6 +70,7 @@ export async function Invoice() {
           <CardTitle className="flex items-center gap-2">
             <FileCheck2 />
             Sales Invoice
+            <span className="font-base text-gray-500">({invoices.length})</span>
           </CardTitle>
           <CardDescription>
             Manage your invoice and view their sales performance.
@@ -83,46 +81,53 @@ export async function Invoice() {
             <TableHeader>
               <TableRow>
                 <TableHead>Invoice number</TableHead>
-
-                <TableHead className="hidden md:table-cell">Price</TableHead>
                 <TableHead className="hidden md:table-cell">
                   Customer Name
                 </TableHead>
                 <TableHead className="hidden md:table-cell">
                   Created at
                 </TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead className="hidden md:table-cell">
+                  Description
+                </TableHead>
+                <TableHead className="hidden md:table-cell">Value</TableHead>
+                <TableHead className="text-center">Status</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id}>
+              {invoices.map((invoice) => (
+                <TableRow key={invoice.id}>
                   {" "}
-                  <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    ${product.price.toFixed(2)}
-                  </TableCell>{" "}
-                  {/* Format price with 2 decimal places */}
-                  <TableCell className="hidden md:table-cell">
-                    {product.quantity}
+                  <TableCell className="font-medium">
+                    {invoice.invoiceNumber}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
-                    {product.createdAt}
+                    {getCustomerData(invoice.customerId)}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {moment(invoice.createdAt).format("DD/MM/YYYY")}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {invoice.description}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    Rp. {invoice.total}
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={cn("bg-blue-500", {
-                        "bg-green-200 text-green-900":
-                          product.status == "Active",
-                        "bg-gray-100 text-gray-700": product.status == "Draft",
-                      })}
+                    <div
+                      className={cn(
+                        "flex w-full items-center justify-center rounded-sm bg-green-100 py-1 font-semibold text-green-700",
+                        {
+                          "bg-red-100 text-red-700":
+                            invoice.status === "UNPAID",
+                        },
+                      )}
                     >
-                      {product.status}
-                    </Badge>
+                      {invoice.status}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>

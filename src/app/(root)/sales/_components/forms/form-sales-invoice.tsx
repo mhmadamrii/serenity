@@ -69,7 +69,7 @@ const FormSchema = z.object({
   // }),
   lineItemsInvoice: z.array(
     z.object({
-      product_id: z.string(),
+      productId: z.string(),
       qty: z.coerce.number(),
       price: z.coerce.number(),
       total: z.coerce.number(),
@@ -145,7 +145,7 @@ export function FormSalesInvoice({
     const lineItemsInvoiceProduct = data.lineItemsInvoice.map((item) => {
       return {
         ...item,
-        product_id: JSON.parse(item.product_id).id,
+        productId: JSON.parse(item.productId).id,
       };
     });
     const subTotalAllLineItems = lineItemsInvoiceProduct.reduce((acc, curr) => acc + curr.total, 0) // prettier-ignore
@@ -158,13 +158,14 @@ export function FormSalesInvoice({
       total: subTotalAllLineItems, // as subtotal
       status: data.status as "PAID" | "UNPAID",
       userId: currentUserId,
-      lineItemsInvoice: lineItemsInvoiceProduct,
+      invoiceLineItems: lineItemsInvoiceProduct,
     };
 
     mutate(rebuildData);
   }
 
-  console.log(form.getValues("lineItemsInvoice"));
+  form.watch("lineItemsInvoice");
+
   return (
     <FormInvoiceWrapper>
       <Form {...form}>
@@ -194,7 +195,9 @@ export function FormSalesInvoice({
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select recorded customer" />
+                            {field.value == ""
+                              ? "Select customer"
+                              : JSON.parse(field.value).name}
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -386,7 +389,7 @@ export function FormSalesInvoice({
                   disabled={isPending}
                   value={
                     form
-                      .getValues("lineItemsInvoice")
+                      .watch("lineItemsInvoice")
                       ?.reduce((acc, curr) => acc + Number(curr.total), 0) ?? 0
                   }
                   readOnly

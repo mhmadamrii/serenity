@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { File, ListFilter, PlusCircle, Slash } from "lucide-react";
+import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toPascalCase } from "~/lib/helpers";
@@ -25,7 +26,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
-import { cn } from "~/lib/utils";
 
 interface IProps {
   headerName: string;
@@ -81,8 +81,9 @@ export function SalesHeader({ headerName, breadcrumbItems, type }: IProps) {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Filter by</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem checked>Active</DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>Invactive</DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem checked>All</DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem>Paid</DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem>Unpaid</DropdownMenuCheckboxItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <Button size="sm" variant="outline" className="h-8 gap-1">

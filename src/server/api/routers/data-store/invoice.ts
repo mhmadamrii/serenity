@@ -16,6 +16,13 @@ export const invoiceRouter = createTRPCRouter({
         where: {
           userId: input.userId,
         },
+        include: {
+          invoiceLineItems: {
+            select: {
+              total: true,
+            },
+          },
+        },
       });
     }),
 

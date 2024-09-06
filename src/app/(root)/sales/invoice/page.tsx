@@ -1,10 +1,10 @@
 import { Suspense } from "react";
-import { ContactSkeleton } from "~/components/skeletons/contact-skeleton";
 import { Invoice } from "../_components/parts/invoice";
 import { FormSalesInvoice } from "../_components/forms/form-sales-invoice";
 import { api } from "~/trpc/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "~/lib/auth";
+import { InvoiceSkeleton } from "~/components/skeletons/invoice-skeleton";
 
 export default async function SalesInvoice({
   searchParams,
@@ -24,6 +24,11 @@ export default async function SalesInvoice({
     userId: session?.id,
   });
 
+  const invoices = await api.invoice.getInvoices({
+    userId: session?.id,
+  });
+  console.log("invoices", invoices);
+
   return (
     <>
       {searchParams.form === "invoices" ? (
@@ -33,8 +38,8 @@ export default async function SalesInvoice({
           currentUserId={session.id}
         />
       ) : (
-        <Suspense fallback={<ContactSkeleton />}>
-          <Invoice />
+        <Suspense fallback={<InvoiceSkeleton />}>
+          <Invoice invoices={invoices} customers={customers} />
         </Suspense>
       )}
     </>

@@ -76,7 +76,7 @@ export function FormLineItemsInvoice({
         >
           <FormField
             control={form.control}
-            name={`lineItemsInvoice.${idx}.product_id`}
+            name={`lineItemsInvoice.${idx}.productId`}
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel
@@ -173,6 +173,7 @@ export function FormLineItemsInvoice({
                 >
                   Total
                 </FormLabel>
+                <h1>{form.value}</h1>
                 <FormControl>
                   <Input
                     disabled
