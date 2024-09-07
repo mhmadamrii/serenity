@@ -43,6 +43,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
+import { LoaderImage } from "~/components/loader/loader-image";
 
 const FormSchema = z.object({
   invoice_number: z.string().min(2, {
@@ -407,7 +408,7 @@ export function FormSalesInvoice({
                   Reset
                 </Button>
                 <Button type="submit" className="mt-4 w-1/2">
-                  Create Invoice
+                  {isPending ? <LoaderImage /> : "Create Invoice"}
                 </Button>
               </div>
               <Separator className="w-full" />

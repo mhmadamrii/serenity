@@ -3,11 +3,12 @@
 import Link from "next/link";
 
 import { File, ListFilter, PlusCircle, Slash } from "lucide-react";
+import { LoaderImage } from "~/components/loader/loader-image";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toPascalCase } from "~/lib/helpers";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 
 import {
   DropdownMenu,
@@ -38,6 +39,7 @@ interface IProps {
 
 export function SalesHeader({ headerName, breadcrumbItems, type }: IProps) {
   const router = useRouter();
+  const [isWaiting, setIsWaiting] = useState(false);
   return (
     <div className="relative flex w-full items-center justify-between px-6 py-3">
       <Breadcrumb>
@@ -94,14 +96,19 @@ export function SalesHeader({ headerName, breadcrumbItems, type }: IProps) {
         </Button>
         <Button
           size="sm"
-          className="h-8 gap-1"
-          onClick={() =>
-            router.push("/sales/invoice?form=invoices&type=create")
-          }
+          className="h-8 w-[120px] gap-1"
+          onClick={() => {
+            router.push("/sales/invoice?form=invoices&type=create");
+            setIsWaiting(true);
+          }}
         >
-          <PlusCircle className="h-3.5 w-3.5" />
+          <PlusCircle
+            className={cn("h-3.5 w-3.5", {
+              hidden: isWaiting,
+            })}
+          />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Add {toPascalCase(headerName)}
+            {isWaiting ? <LoaderImage /> : `Add ${toPascalCase(headerName)}`}
           </span>
         </Button>
       </div>

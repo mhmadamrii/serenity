@@ -44,6 +44,7 @@ export function TableSalesInvoice({ invoices, customers }: IProps) {
     );
     return dataLineItemCustomer?.name;
   };
+
   return (
     <>
       <Table>
