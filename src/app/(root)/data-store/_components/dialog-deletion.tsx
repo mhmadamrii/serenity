@@ -29,7 +29,6 @@ export function DialogDeletion({
   setDeleteId,
   refresh,
 }: IProps) {
-  console.log("delete id", deleteId);
   const { mutate: deleteProductFn } = api.product.deleteProduct.useMutation({
     onSuccess: () => {
       toast.success("Successfully delete product");
