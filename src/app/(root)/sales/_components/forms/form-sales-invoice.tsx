@@ -79,17 +79,10 @@ const FormSchema = z.object({
 });
 
 interface IProps {
-  customers: Contact[];
-  products: Product[];
   currentUserId: string;
 }
 
-export function FormSalesInvoice({
-  customers,
-  products,
-  currentUserId,
-}: IProps) {
-  const router = useRouter();
+export function FormSalesInvoice({ currentUserId }: IProps) {
   const [totalLineItems, setTotalLineItems] = useState([
     {
       product: "",
@@ -99,6 +92,14 @@ export function FormSalesInvoice({
       total: 0,
     },
   ]);
+
+  const { data: customers } = api.contact.getContacts.useQuery({
+    userId: currentUserId,
+  });
+
+  const { data: products } = api.product.getProducts.useQuery({
+    userId: currentUserId,
+  });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -113,7 +114,7 @@ export function FormSalesInvoice({
   });
 
   const { mutate, isPending } = api.invoice.createInvoice.useMutation({
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.success("Successfully create new invoice");
       setTotalLineItems([]);
       form.reset();

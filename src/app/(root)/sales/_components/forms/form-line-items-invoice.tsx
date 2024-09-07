@@ -33,7 +33,7 @@ interface IProps {
   totalLineItems: TotalLineItemsState[];
   form: any;
   isPending: boolean;
-  products: Product[];
+  products: Product[] | undefined;
   handleDeleteLineItems: (id: number) => void;
 }
 

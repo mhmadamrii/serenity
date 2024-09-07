@@ -1,11 +1,7 @@
 import { SalesHeader } from "../sales-header";
-import { MoreHorizontal, FileCheck2 } from "lucide-react";
+import { FileCheck2 } from "lucide-react";
 import { TableSalesInvoice } from "../tables/table-sales-invoice";
-
-import type {
-  Invoice as TInvoice,
-  Contact as TCustomers,
-} from "@prisma/client";
+import { api } from "~/trpc/server";
 
 import {
   Card,
@@ -17,11 +13,17 @@ import {
 } from "~/components/ui/card";
 
 interface IProps {
-  invoices: TInvoice[];
-  customers: TCustomers[];
+  currentUserId: string;
 }
 
-export function Invoice(props: IProps) {
+export async function Invoice({ currentUserId }: IProps) {
+  const customers = await api.contact.getContacts({
+    userId: currentUserId,
+  });
+
+  const invoices = await api.invoice.getInvoices({
+    userId: currentUserId,
+  });
   return (
     <>
       <SalesHeader
@@ -42,20 +44,18 @@ export function Invoice(props: IProps) {
           <CardTitle className="flex items-center gap-2">
             <FileCheck2 />
             Sales Invoice
-            <span className="font-base text-gray-500">
-              ({props.invoices.length})
-            </span>
+            <span className="font-base text-gray-500">({invoices.length})</span>
           </CardTitle>
           <CardDescription>
             Manage your invoice and view their sales performance.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <TableSalesInvoice {...props} />
+          <TableSalesInvoice customers={customers} invoices={invoices} />
         </CardContent>
         <CardFooter>
           <div className="text-xs text-muted-foreground">
-            Showing {props.invoices.length} invoices
+            Showing {invoices.length} invoices
           </div>
         </CardFooter>
       </Card>
