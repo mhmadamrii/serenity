@@ -1,29 +1,96 @@
-# Create T3 App
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+# Serenity Accounting
 
-## What's next? How do I make an app with this?
+A minimalist software accounting app, developed using T3 Stack(Typescript, tRPC, TailwindCss)
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Screenshots
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+![App Screenshot](https://utfs.io/f/10ea0ed5-6218-4cbd-a53a-c00e892a5315-2sc204.png)
 
-## Learn More
+![App Screenshot](https://utfs.io/f/eabbea3e-3b17-4bce-ae22-b7d01ab3dc04-2sc20z.png)
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+![App Screenshot](https://utfs.io/f/97eeb9c0-89b6-4db0-a2b9-1db8245fffe3-2sc1ye.png)
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+## Demo
 
-## How do I deploy this?
+https://serenity-sable.vercel.app
+## Author & Owner
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- [@mhmadamrii](https://www.github.com/mhmadamrii)
+
+
+## Badges
+
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
+[![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
+
+
+## Features
+
+- Light/dark mode toggle
+- Invoicing
+- Purchasing
+- Dashboard
+- Live previews
+- Fullscreen mode
+- Cross platform
+
+
+## Tech Stack
+
+**Client:** React, NextJS, ShadcnUI, TailwindCSS, MagicUI
+
+**Server:** Node, tRPC
+
+
+## Contributing
+
+Contributions to Serenity Accounting are always welcome! Whether it's bug reports, feature requests, or improvements to the documentation, all feedback is appreciated.
+
+See `contributing.md` for ways to get started.
+
+Please adhere to this project's `code of conduct`.
+
+
+
+
+## Environment Variables
+
+To run this project, you will need to add/configure your own env (please see .env.example and copy-paste to your .env file) 
+
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/mhmadamrii/serenity.git
+```
+
+Go to the project directory
+
+```bash
+  cd serenity
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Generate Database
+```bash
+  npm run db:push
+```
+
+Start the server
+
+```bash
+  npm run dev
+```
+

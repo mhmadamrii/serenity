@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { LoaderImage } from "~/components/loader/loader-image";
 import { useSession } from "next-auth/react";
 import { api } from "~/trpc/react";
 import { useEffect, useState } from "react";
@@ -273,11 +274,13 @@ export function FormCustomer({ open }: { open: boolean }) {
             </section>
 
             <Button type="submit" className="mt-4 w-full">
-              {isPending || isPendingEdit
-                ? "Loading"
-                : idUser
-                  ? "Edit Contact"
-                  : "Create Contact"}
+              {isPending || isPendingEdit ? (
+                <LoaderImage />
+              ) : idUser ? (
+                "Edit Contact"
+              ) : (
+                "Create Contact"
+              )}
             </Button>
           </form>
         </Form>
