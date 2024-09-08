@@ -104,7 +104,13 @@ export function TableSalesInvoice({ invoices, customers }: IProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        router.push(`/sales/invoice/${invoice.id}`)
+                      }
+                    >
+                      Detail
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => setDeleteId(invoice.id.toString())}
                     >

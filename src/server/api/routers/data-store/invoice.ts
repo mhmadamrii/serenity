@@ -26,13 +26,19 @@ export const invoiceRouter = createTRPCRouter({
       });
     }),
 
-  getProductById: publicProcedure
-    .input(z.object({ id: z.union([z.string(), z.undefined()]) }))
+  getInvoiceById: publicProcedure
+    .input(
+      z.object({
+        id: z.union([z.string(), z.undefined()]),
+        userId: z.union([z.string(), z.undefined()]),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const id = typeof input.id === "string" ? parseInt(input.id) : input.id;
-      return await ctx.db.product.findUnique({
+      return await ctx.db.invoice.findUnique({
         where: {
           id,
+          userId: input.userId,
         },
       });
     }),
@@ -127,11 +133,11 @@ export const invoiceRouter = createTRPCRouter({
       }
     }),
 
-  deleteProduct: publicProcedure
+  deleteInvoice: publicProcedure
     .input(z.object({ id: z.union([z.string(), z.undefined()]) }))
     .mutation(async ({ ctx, input }) => {
       const id = typeof input.id === "string" ? parseInt(input.id) : input.id;
-      return await ctx.db.product.delete({
+      return await ctx.db.invoice.delete({
         where: {
           id,
         },

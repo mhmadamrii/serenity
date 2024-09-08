@@ -47,8 +47,16 @@ export function DialogDeletion({
     onError: (err) => console.log("error deletion", err),
   });
 
+  const { mutate: deleteInvoiceFn } = api.invoice.deleteInvoice.useMutation({
+    onSuccess: () => {
+      toast.success("Successfully delete invoice");
+      refresh();
+      setDeleteId("");
+    },
+    onError: (err) => console.log("error deletion", err),
+  });
+
   const handleDeletion = () => {
-    console.log("try to delete");
     switch (title) {
       case "product":
         deleteProductFn({ id: deleteId });
@@ -56,6 +64,10 @@ export function DialogDeletion({
 
       case "contact":
         deleteContactFn({ id: deleteId });
+        break;
+
+      case "invoice":
+        deleteInvoiceFn({ id: deleteId });
         break;
 
       default:
