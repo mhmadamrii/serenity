@@ -31,7 +31,6 @@ export function TableProducts({
 }: {
   myProducts: ExtendedIProduct[];
 }) {
-  console.log("myProducts", myProducts);
   const router = useRouter();
   const [deleteId, setDeleteId] = useState("");
 
@@ -84,7 +83,11 @@ export function TableProducts({
               >
                 {product.status ? "Active" : "Inactive"}
               </div>
-              <Button onClick={() => {}}>
+              <Button
+                onClick={() =>
+                  router.push(`?form_products=true&type=edit&id=${product.id}`)
+                }
+              >
                 <PencilIcon />
               </Button>
               <Button
