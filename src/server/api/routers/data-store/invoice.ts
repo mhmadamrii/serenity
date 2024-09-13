@@ -84,6 +84,49 @@ export const invoiceRouter = createTRPCRouter({
       }
     }),
 
+  editInvoiceStatus: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        status: z.enum(["PAID", "UNPAID"]).optional().default("UNPAID"),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        if (!input.id) {
+          return;
+        }
+
+        const invoice = await ctx.db.invoice.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            status: input.status,
+          },
+        });
+
+        return invoice;
+      } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          if (
+            error.code === "P2002" &&
+            // @ts-ignore
+            error.meta?.target?.includes("email")
+          ) {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: "Email address is already registered.",
+            });
+          }
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An error occurred during registration.",
+        });
+      }
+    }),
+
   editProduct: publicProcedure
     .input(
       z.object({

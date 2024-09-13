@@ -7,6 +7,8 @@ import { MoreHorizontal } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import { DialogDeletion } from "~/app/(root)/data-store/_components/dialog-deletion";
+import { toast } from "sonner";
+import { api } from "~/trpc/react";
 
 import type {
   Invoice as TInvoice,
@@ -38,11 +40,53 @@ interface IProps {
 export function TableSalesInvoice({ invoices, customers }: IProps) {
   const router = useRouter();
   const [deleteId, setDeleteId] = useState("");
+
+  const {
+    mutate: editInvoiceStatus,
+    isPending,
+    isSuccess,
+  } = api.invoice.editInvoiceStatus.useMutation({
+    onSuccess: (res) => {
+      router.refresh();
+      toast.success("Successfully edit invoice status");
+    },
+    onError: (err: any) => console.log("response error", err),
+  });
+
   const getCustomerData = (id: string) => {
     const dataLineItemCustomer = customers.find(
       (customer) => customer.id === +id,
     );
     return dataLineItemCustomer?.name;
+  };
+
+  const handleEditInvoiceStatus = (id: number, currentStatus: string) => {
+    switch (currentStatus) {
+      case "PAID":
+        editInvoiceStatus({
+          id,
+          status: "UNPAID",
+        });
+        break;
+
+      case "UNPAID":
+        editInvoiceStatus({
+          id,
+          status: "PAID",
+        });
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const getAppropriateStatus = (status: string) => {
+    if (status === "PAID") {
+      return "Mark as Unpaid";
+    } else {
+      return "Mark as Paid";
+    }
   };
 
   return (
@@ -104,6 +148,13 @@ export function TableSalesInvoice({ invoices, customers }: IProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        handleEditInvoiceStatus(invoice.id, invoice.status)
+                      }
+                    >
+                      {getAppropriateStatus(invoice.status)}
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() =>
                         router.push(`/sales/invoice/${invoice.id}`)
