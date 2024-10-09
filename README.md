@@ -1,8 +1,6 @@
-
 # Serenity Accounting
 
 A minimalist software accounting app, developed using T3 Stack(Typescript, tRPC, TailwindCss)
-
 
 ## Screenshots
 
@@ -12,22 +10,19 @@ A minimalist software accounting app, developed using T3 Stack(Typescript, tRPC,
 
 ![App Screenshot](https://utfs.io/f/97eeb9c0-89b6-4db0-a2b9-1db8245fffe3-2sc1ye.png)
 
-
 ## Demo
 
 https://serenity-sable.vercel.app
+
 ## Author & Owner
 
 - [@mhmadamrii](https://www.github.com/mhmadamrii)
 
-
 ## Badges
-
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 [![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
-
 
 ## Features
 
@@ -39,13 +34,11 @@ https://serenity-sable.vercel.app
 - Fullscreen mode
 - Cross platform
 
-
 ## Tech Stack
 
 **Client:** React, NextJS, ShadcnUI, TailwindCSS, MagicUI
 
 **Server:** Node, tRPC
-
 
 ## Contributing
 
@@ -55,13 +48,9 @@ See `contributing.md` for ways to get started.
 
 Please adhere to this project's `code of conduct`.
 
-
-
-
 ## Environment Variables
 
-To run this project, you will need to add/configure your own env (please see .env.example and copy-paste to your .env file) 
-
+To run this project, you will need to add/configure your own env (please see .env.example and copy-paste to your .env file)
 
 ## Run Locally
 
@@ -84,6 +73,7 @@ Install dependencies
 ```
 
 Generate Database
+
 ```bash
   npm run db:push
 ```
@@ -94,3 +84,4 @@ Start the server
   npm run dev
 ```
 
+hello world
